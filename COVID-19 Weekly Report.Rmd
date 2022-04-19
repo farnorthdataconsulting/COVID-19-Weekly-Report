@@ -1,17 +1,17 @@
 ---
-title: "![](C:/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/logo.jpg)"
+title: "![](C:/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/COVID-19-Weekly-Report/logo.jpg)"
 author: Alaska Department of Health and Social Services Weekly COVID-19 and Influenva
   Update
 date: "March 27 – April 2, 2022"
 output:
-  pdf_document:
-    toc: no
-    latex_engine: xelatex
-  word_document:
-    toc: yes
   html_document:
     toc: yes
     toc_float: yes
+  word_document:
+    toc: yes
+  pdf_document:
+    toc: no
+    latex_engine: xelatex
 graphics: yes
 ---
 
@@ -604,7 +604,7 @@ reactable(cases_reactable_table,
             Cases_Last_7_Days = colDef(#name = "Case Count",
                                   html = TRUE,
                                   header = function(value) {
-                                    value = paste0("Case Count ", cases_timeframe)
+                                    value = paste0("Case Count ", case_rate_cases_timeframe)
                                     div(value)
                                   },
                                   minWidth = 120,
@@ -628,14 +628,14 @@ reactable(cases_reactable_table,
             
             Case_Trend = colDef(#name = "Cases Trend (Last 6 Weeks)",
                                 header = function(value) {
-                                    value = paste0("Weekly Case Counts ", rates_timeframe)
+                                    value = paste0("Weekly Case Counts ", case_rate_rates_timeframe)
                                     div(value)
                                   },
                                align = 'center',
                                html = TRUE,
                                minWidth = 160,
                                cell = function(values, index) {
-                                 chart_path = temp_file_dict[cases_reactable_table$Borough[index]]
+                                 chart_path = case_rate_temp_file_dict[cases_reactable_table$Borough[index]]
                                  img_src <- knitr::image_uri(chart_path)
                                  image <- img(src = img_src, alt = '', width = 120, height = 25)
                                  tagList(
@@ -732,7 +732,7 @@ reactable(cases_reactable_table,
 
 <p>&nbsp;</p>
 
-<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/6_original.png)<center>
+<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/COVID-19-Weekly-Report/6_original.png)<center>
 
 ##### Positive influenza lab reports in Alaska by week of specimen collection for the 2017-2018 influenza season through present. The current season through April 2, 2022 is shown in red.
 
@@ -757,7 +757,7 @@ reactable(cases_reactable_table,
 * ILI levels increased in December but have since decreased from the late-December peak, remaining steady over the last few weeks.
 
 <p>&nbsp;</p>
-<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/7_original.jpg)<center>
+<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/COVID-19-Weekly-Report/7_original.jpg)<center>
 
 
 
