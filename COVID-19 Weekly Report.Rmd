@@ -34,8 +34,6 @@ library(RcppRoll)
 library(Dict)
 library(tinytex)
 library(timetk)
-library(ggiraph)
-library(plotly)
 ```
 
 
@@ -581,26 +579,8 @@ hosp_bed_occupied <- data.frame(hosp_bed_drop_weekday)
 <p>&nbsp;</p>
 
 
-```{r, Onset Cases by Week Graph, include = TRUE, echo = FALSE}
-#Create Weekly Cases by Onet Date Graph
-cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
-  
-  #Cases by Onset Date
-  add_trace(
-    type = "bar",
-    x = ~Date,
-    y = ~Cases_Date_Onset
-  )
+```{r, Onset Cases by Week Graph, Include = TRUE, Echo = FALSE}
 
-  #Preliminary Data
-
-
-
-  #Figure Layout Options
-
-
-#Render Graph as Plotly Interactive Graph
-cases_onset_graph
 ```
 
 
