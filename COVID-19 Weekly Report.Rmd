@@ -559,7 +559,7 @@ options(reactable.theme = reactableTheme(
 
 
 #Set Cases Summary and Add Columsn for Reactable Table
-cases_reactable_table <- data.frame(cases_summary) %>%
+cases_reactable_table <- data.frame(case_rate_cases_summary) %>%
   mutate(Case_Trend = NA) %>%
   select(-c(Date, Cases)) %>%
   select(Borough, Community_Rate_Tag, Rate_Last_7_Days, Cases_Last_7_Days, , Case_Trend)
