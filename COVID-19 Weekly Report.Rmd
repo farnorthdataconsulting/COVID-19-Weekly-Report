@@ -37,6 +37,7 @@ library(timetk)
 ```
 
 
+
 ```{r, Process Data for Onset Cases Over Time Graph, include = FALSE}
 
 #PULL DATA FROM AGOL AND PROCESS DATA
@@ -454,25 +455,67 @@ hosp_bed_select_cols <- select(hosp_bed_filter_gcaf,
 
 
 #Create List of Regions in Data Table
+hosp_bed_region_list <- select(hosp_bed_select_cols, Hospital.Region)
+hosp_bed_region_list <- unique(hosp_bed_region_list)
+hosp_bed_region_list <- as.list(hosp_bed_region_list$Hospital.Region)
+
+
+#Create Empty Data Frame with Dates for Merge
+hosp_bed_merged_datasets <- data.frame(hosp_bed_select_cols) %>%
+  select(-c(Hospital.Region, Pos.COVID..Imputed.)) %>%
+  unique()
+
+hosp_bed_merged_datasets$Survey.Date <- as.Date(hosp_bed_merged_datasets$Survey.Date, "%m/%d/%Y")
+hosp_bed_merged_datasets$Survey.Date <- as.character(hosp_bed_merged_datasets$Survey.Date)
 
 
 
-#Merge Hospital Data by Region to DataFrame
+#Merge Region Data into Main Dataframe
+for (region in hosp_bed_region_list){
+  
+  #Select Out 1 Region at a Time
+  hosp_bed_region_grab <- filter(hosp_bed_select_cols, Hospital.Region == region)
+  
+  #Convert Survey Date Field to Date Type
+  hosp_bed_region_grab$Survey.Date <- as.Date( hosp_bed_region_grab$Survey.Date, "%m/%d/%Y")
+  
+  #Group by Day
+  hosp_bed_region_grab <- hosp_bed_region_grab %>%
+    group_by(Survey.Date, Hospital.Region) %>%
+    summarize(Pos.COVID..Imputed. = sum(Pos.COVID..Imputed.))
+  
+  #Create Region Column
+  hosp_bed_region_grab[[region]] = hosp_bed_region_grab$Pos.COVID..Imputed.
+  
+  #Drop Pos COVID Count and Region Name
+  hosp_bed_region_grab <- select(hosp_bed_region_grab, Survey.Date, all_of(region))
+  
+  #Convert Dates to Characters
+  hosp_bed_region_grab$Survey.Date <- as.character(hosp_bed_region_grab$Survey.Date)
+  
+  #Merge Region Grab to Merged Dataset
+  hosp_bed_merged_datasets <- merge(hosp_bed_merged_datasets, hosp_bed_region_grab, by = c("Survey.Date"))
+  
+}
+
+hosp_bed_merged_datasets$Survey.Date <- as.Date(hosp_bed_merged_datasets$Survey.Date, "%Y-%m-%d")
 
 
 
 #Convert Dates to Weekdays
+hosp_bed_add_weekdays <- mutate(hosp_bed_merged_datasets, Weekday = weekdays(Survey.Date))
 
 
 #Keep Only Saturdays
+hosp_bed_keep_sat <- filter(hosp_bed_add_weekdays, Weekday == "Saturday")
 
 
 #Drop Weekdays Column
-
+hosp_bed_drop_weekday <- select(hosp_bed_keep_sat, -c(Weekday))
 
 
 #Set Final DataFrame
-
+hosp_bed_occupied <- data.frame(hosp_bed_drop_weekday)
 ```
 
 
