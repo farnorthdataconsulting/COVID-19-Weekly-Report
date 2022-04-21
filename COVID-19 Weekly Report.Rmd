@@ -528,18 +528,30 @@ hosp_bed_drop_weekday <- select(hosp_bed_keep_sat, -c(Weekday))
 
 #Set Final DataFrame
 hosp_bed_occupied <- data.frame(hosp_bed_drop_weekday)
+
+
+
+#TEST 
+
+hosp_test <- data.frame(hosp_bed_select_cols)
+hosp_test <- hosp_test %>%
+  mutate(Survey.Date = as.Date(hosp_test$Survey.Date, "%m/%d/%Y")) %>%
+  mutate(Weekday = weekdays(Survey.Date)) %>%
+  filter(Weekday == "Saturday")
 ```
 
 
 
 
 ```{r, Proccess Data for Vaccinated Vs Unvcaccinated Bar Graphs Past 6 Weeks, include = FALSE}
+
 ```
 
 
 
 
 ```{r, Proccess Data for Vaccinated Vs Unvcaccinated Line Charts Past 38 Weeks, include = FALSE}
+
 ```
 
 
@@ -566,12 +578,12 @@ hosp_bed_occupied <- data.frame(hosp_bed_drop_weekday)
 
 * Beginning April 6, 2022, DHSS will be updating data on the Alaska COVID-19 Information Hub once a week, on Wednesdays, rather than the current three times weekly. 
 
-
-
-
-
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+
+
+
+
 
 
 ## COVID-19 
@@ -595,13 +607,12 @@ hosp_bed_occupied <- data.frame(hosp_bed_drop_weekday)
 <p>&nbsp;</p>
 
 
-
+<!-- TITLE AND SUBTITLE  FOR WEEKLY CASES GRAPH -->
 <p style="font-family: Open Sans; font-size: 22px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 Weekly COVID-19 Cases Among Alaskan Residents by Onset Date</b></p>
 
 <p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
 Cases are attributed to symptom onset date, if recorded. Otherwise, cases are attributed to specimen collection date, report date or hospitalization date, whichever comes first.</p>
-
 
 ```{r, Onset Cases by Week Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
 
@@ -644,9 +655,11 @@ cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
       xanchor = "center",
       x = .400,
       yanchor = "middle",
+      textposition = "right",
       font = list(
         family = "Open Sans",
-        size = 20)),
+        size = 20)
+      ),
     
     xaxis = list(
       title = "",
@@ -671,16 +684,19 @@ cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
 cases_onset_graph
 ```
 
+##### Get the Data <a href="url">Here</a>
+
 
 
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+
 
 
 
 <center>
-``` {r Generate Table, include = TRUE, echo = FALSE, fig.align = 'center' }
+``` {r Case Rates by BCA Table, include = TRUE, echo = FALSE, fig.align = 'center' }
 
 #Set Table Feature Options
 options(reactable.theme = reactableTheme(
@@ -740,7 +756,7 @@ reactable(cases_reactable_table,
                                     value = paste0("Case Count ", case_rate_cases_timeframe)
                                     div(value)
                                   },
-                                  minWidth = 120,
+                                  minWidth = 130,
                                   align = 'center',
                                   cell = function(value){
                                    div(class = 'number_varela', value)
@@ -748,7 +764,7 @@ reactable(cases_reactable_table,
                                   ),
             
             Rate_Last_7_Days = colDef(name = "Case Rate Per 100K", 
-                                 minWidth = 140,
+                                 minWidth = 120,
                                  align = 'center',
                                  format = colFormat(separators = TRUE),
                                  cell = function(value, index){
@@ -766,11 +782,11 @@ reactable(cases_reactable_table,
                                   },
                                align = 'center',
                                html = TRUE,
-                               minWidth = 160,
+                               minWidth = 180,
                                cell = function(values, index) {
                                  chart_path = case_rate_temp_file_dict[cases_reactable_table$Borough[index]]
                                  img_src <- knitr::image_uri(chart_path)
-                                 image <- img(src = img_src, alt = '', width = 120, height = 25)
+                                 image <- img(src = img_src, alt = '', width = 140, height = 25)
                                  tagList(
                                  div(style = list(display = 'flex'), image))
             })
@@ -779,6 +795,8 @@ reactable(cases_reactable_table,
 
 ```
 <center>
+
+##### Get the Data <a href="url">Here</a>
 
 <p style="font-family: Open Sans; font-size: 12px; color: #000000; text-align: left; line-height: 1.4em;">
 *Rates based on <20 observations are statistically unreliable and should be used with caution.</p>
@@ -810,9 +828,124 @@ Alert levels are based on case report date. The case rates in the Kusilvak and B
 <p>&nbsp;</p>
 
 
-```{r, Hospital Capacity Over Time Graph, Include = TRUE, Echo = FALSE}
+```{r, Hospital Capacity Over Time Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
+  
+  add_trace(
+    name = "Anchorage",
+    type = "scatter",
+    mode = "line",
+    x = ~Survey.Date,
+    y = ~Anchorage,
+    line=list(
+      color='#1c3d4b'
+      )
+  ) %>%
+  
+  
+  add_trace(
+    name = "Gulf Coast",
+    type = "scatter",
+    mode = "line",
+    x = ~Survey.Date,
+    y = ~Gulf.Coast,
+    line=list(
+      color='#2a5b71'
+      )
+  ) %>%
+  
+  add_trace(
+    name = "Interior",
+    type = "scatter",
+    mode = "line",
+    x = ~Survey.Date,
+    y = ~Interior,
+    line=list(
+      color='#387a96'
+      )
+  ) %>%
+  
+  add_trace(
+    name = "Matanuska - Susitna",
+    type = "scatter",
+    mode = "line",
+    x = ~Survey.Date,
+    y = ~Matanuska.Susitna,
+    line=list(
+      color='#4698bc')
+  ) %>%
+  
+  add_trace(
+    name = "Northern",
+    type = "scatter",
+    mode = "line",
+    x = ~Survey.Date,
+    y = ~Northern,
+    line=list(
+      color='#6badc9')
+  ) %>%
+  
+  add_trace(
+    name = "Southeast",
+    type = "scatter",
+    mode = "line",
+    x = ~Survey.Date,
+    y = ~Southeast,
+    line=list(
+      color='#90c1d7')
+  ) %>%
+  
+  add_trace(
+    name = "Southwest",
+    type = "scatter",
+    mode = "line",
+    x = ~Survey.Date,
+    y = ~Southwest,
+    line=list(
+      color='#b5d6e4')
+  ) %>%
+  
+  
+  layout(
+    
+    title = list(
+      text = "",
+      xanchor = "center",
+      x = .400,
+      yanchor = "middle",
+      textposition = "right",
+      font = list(
+        family = "Open Sans",
+        size = 20)
+      ),
+    
+    xaxis = list(
+      title = "",
+      text = "%{y:,}"
+    ),
+    
+    yaxis = list(
+      title = "",
+      tickformat = ",",
+      automargin=T
+      
+    ),
+        
+      
+    legend = list(
+      x = .03, 
+      y = .97),
+   
+    hovermode = "x unified"
+    
+                              
+  )
+
+
+hosp_bed_graph
 ```
 
+##### Get the Data <a href="url">Here</a>
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -1006,24 +1139,13 @@ h3 { /* Sub Headers  */
   color: Black;
 }
 
-h5 { /* Graph Titles  */
-  font-size: 11px;
-  font-weight: 300;
-  font-style: italic;
-  font-family: "Arial";
-  color: Black;
-  text-align: left;
-  width:80%
-}
 
-h6 { /* Descriptions  */
-  font-size: 11px;
-  font-weight: 300;
-  font-style: italic;
-  font-family: "Arial";
+h5 { /* html link  */
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "Open Sans";
   color: Black;
   text-align: left;
-  width:80%
 }
 
 
