@@ -86,9 +86,20 @@ cases_onset_agg_week <- summarise_by_time(
 cases_onset_filter_dates <- filter(cases_onset_agg_week, Date >= max(Date)-182)
 
 
+#Create Preliminary Data Category
+cases_onset_add_preliminary <- mutate(cases_onset_filter_dates, Preliminary_Data = Cases_Date_Onset)
 
+
+#Set Preliminary Data to NA Before Last Two Weeks and Cases Onset Data After Last Two Weeks
+cases_onset_set_na <- data.frame(cases_onset_add_preliminary)
+cases_onset_set_na$Preliminary_Data[0:(nrow(cases_onset_set_na) - 2)] <- NA
+cases_onset_set_na$Cases_Date_Onset[nrow(cases_onset_set_na):(nrow(cases_onset_set_na) - 1)] <- NA
+
+
+
+nrow(cases_onset_set_na)
 #Set Final Dataframe
-cases_onset_by_week <- data.frame(cases_onset_filter_dates)
+cases_onset_by_week <- data.frame(cases_onset_set_na)
 ```
 
 
@@ -535,6 +546,10 @@ hosp_bed_occupied <- data.frame(hosp_bed_drop_weekday)
 
 
 
+
+
+
+
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
@@ -561,7 +576,7 @@ hosp_bed_occupied <- data.frame(hosp_bed_drop_weekday)
 
 ## COVID-19 
 
-### COVID-19 Case Trends
+### COVID-19 Case Trends {.unlisted .unnumbered}
 
 * COVID-19 transmission continues to occur widely throughout much of Alaska, with some evidence for an upwards trajectory. Cases and hospitalizations remain far below the peak of the Omicron wave.
 
@@ -580,27 +595,83 @@ hosp_bed_occupied <- data.frame(hosp_bed_drop_weekday)
 <p>&nbsp;</p>
 
 
-```{r, Onset Cases by Week Graph, Include = TRUE, Echo = FALSE}
+
+<p style="font-family: Open Sans; font-size: 22px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+Weekly COVID-19 Cases Among Alaskan Residents by Onset Date</b></p>
+
+<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+Cases are attributed to symptom onset date, if recorded. Otherwise, cases are attributed to specimen collection date, report date or hospitalization date, whichever comes first.</p>
+
+
+```{r, Onset Cases by Week Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+
 cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
   
   #Cases by Onset Date
   add_trace(
     type = "bar",
+    name = "Cases by Onset Date",
     x = ~Date,
-    y = ~Cases_Date_Onset
-  )
+    y = ~Cases_Date_Onset,
+    marker = list(
+      color = "rgb(212, 70, 47)"
+    ),
+    hovertemplate = ~paste("</br> %{x}",
+                           "<br> %{y:,}")
+  ) %>%
 
 
   #Preliminary Data
-
-
-
-
+  add_trace(
+    type = 'bar',
+    name = "Preliminary Data",
+    x = ~Date,
+    y = ~Preliminary_Data,
+    marker = list(
+      color = "rgb(179, 179, 179)"
+    ),
+    hovertemplate = ~paste("</br> %{x}",
+                           "<br> %{y:,}")
+  ) %>%
+  
+  
+  
   #Figure Output Options
-
+  layout(
+    
+    title = list(
+      text = "",
+      xanchor = "center",
+      x = .400,
+      yanchor = "middle",
+      font = list(
+        family = "Open Sans",
+        size = 20)),
+    
+    xaxis = list(
+      title = "",
+      text = "%{y:,}"
+    ),
+    
+    yaxis = list(
+      title = "",
+      tickformat = ",",
+      automargin=T
+      
+    ),
+        
+      
+    legend = list(x = .72, y = .95)
+    
+    
+    #margin = list(l = 50, r = 20, t = 80, b = 0)
+    
+  )
 
 cases_onset_graph
 ```
+
+
 
 
 <p>&nbsp;</p>
@@ -709,9 +780,15 @@ reactable(cases_reactable_table,
 ```
 <center>
 
-##### *Rates based on <20 observations are statistically unreliable and should be used with caution. 
-##### **Rates based on <6 observations are not reported.
-##### Alert levels are based on case report date. The case rates in the Kusilvak and Bethel Census Areas are artificially elevated this past week due to processing of delayed reports.
+<p style="font-family: Open Sans; font-size: 12px; color: #000000; text-align: left; line-height: 1.4em;">
+*Rates based on <20 observations are statistically unreliable and should be used with caution.</p>
+
+<p style="font-family: Open Sans; font-size: 12px; color: #000000; text-align: left; line-height: 1.4em;">
+**Rates based on <6 observations are not reported.</p>
+
+<p style="font-family: Open Sans; font-size: 12px; color: #000000; text-align: left; line-height: 1.4em;">
+Alert levels are based on case report date. The case rates in the Kusilvak and Bethel Census Areas are artificially elevated this past week due to processing of delayed reports.</p>
+
 
 
 <p>&nbsp;</p>
@@ -721,7 +798,7 @@ reactable(cases_reactable_table,
 
 
 
-### COVID-19 and Hospital Capacity
+### COVID-19 and Hospital Capacity {.unlisted .unnumbered}
 
 * Hospital capacity remains limited. Large numbers of patients overall (not necessarily with COVID-19 or other respiratory viruses) relative to the number of available staff continue to create capacity challenges across the state, with some areas more affected than others.
 
@@ -745,7 +822,7 @@ reactable(cases_reactable_table,
 
 
 
-### COVID-19 and Vaccination
+### COVID-19 and Vaccination {.unlisted .unnumbered}
 * 71.2% of Alaska residents aged ≥5 years have received at least one dose of a COVID-19 vaccine. Among those who completed the primary vaccine series, 50.2% of Alaska residents ≥18 years have received their booster. Learn more about COVID-19 vaccination coverage in Alaska on the Vaccine Dashboard. Learn more about COVID-19 vaccines.
 
 * Vaccines help protect against infection and against severe disease, especially when a person is up to date on vaccinations. During the 4-week period from February 6, 2022–March 5, 2022, unvaccinated Alaskans were 7.3 times more likely to be hospitalized due to COVID-19 than Alaskans who are up to date on COVID-19 vaccination (i.e., completed the primary series and received a booster dose, if eligible) and 2.9 times more likely to be hospitalized due to COVID-19 than Alaskans who completed the primary vaccination series but are not up to date. These estimates are lagged by one week to partially account for the time it takes to document hospitalizations. (See the monthly report for more data and analysis through January.)
@@ -758,7 +835,7 @@ reactable(cases_reactable_table,
 ```{r, Vaccination Vs Unvaccinated Bar Charts Last 6 Weeks, Include = TRUE, Echo = FALSE}
 ```
 
-##### Unvaccinated Alaskans are 7.3 times more likely to be hospitalized due to COVID-19 than Alaskans who are up to date on COVID-19 vaccination and 2.9 times more likely to be hospitalized due to COVID-19 than Alaskans who completed the primary vaccination series but are not up to date. In order to more easily identify changes over time, the definition of “up to date” as of January 8, 2022, was applied to data from all time points. The absolute rates of hospitalization especially in the most recent 4-week period highlighted in grey are likely underestimates because of COVID-19 hospitalizations that have not yet been documented. **Especially when rates are very low, the estimates of fold-differences between rates may be imprecise. Fold-differences are not calculated if one of the rates is based on <6 cases.
+
 
 <p>&nbsp;</p>
 
@@ -775,7 +852,7 @@ reactable(cases_reactable_table,
 ```{r, Vaccination Vs Unvaccinated Line Chart Last 38 Weeks, Include = TRUE, Echo = FALSE}
 ```
 
-##### In order to more easily identify changes over time, the definition of “up to date” as of January 8, 2022 was applied to data from all time points. Some COVID-19 cases with specimen collection in the immediate past week (indicated by the grey box) may have not yet been reported or counted.
+
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -796,7 +873,7 @@ reactable(cases_reactable_table,
 
 <center>![Alt text](/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/COVID-19-Weekly-Report/6_original.png)<center>
 
-##### Positive influenza lab reports in Alaska by week of specimen collection for the 2017-2018 influenza season through present. The current season through April 2, 2022 is shown in red.
+
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -929,7 +1006,17 @@ h3 { /* Sub Headers  */
   color: Black;
 }
 
-h5 { /* Caption  */
+h5 { /* Graph Titles  */
+  font-size: 11px;
+  font-weight: 300;
+  font-style: italic;
+  font-family: "Arial";
+  color: Black;
+  text-align: left;
+  width:80%
+}
+
+h6 { /* Descriptions  */
   font-size: 11px;
   font-weight: 300;
   font-style: italic;
@@ -941,7 +1028,7 @@ h5 { /* Caption  */
 
 
 body{
-  font-family: Arial;
+  font-family: Open Sans;
   font-size: 12pt;
 }
 
