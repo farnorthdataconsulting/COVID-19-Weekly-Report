@@ -526,18 +526,13 @@ hosp_bed_keep_sat <- filter(hosp_bed_add_weekdays, Weekday == "Saturday")
 hosp_bed_drop_weekday <- select(hosp_bed_keep_sat, -c(Weekday))
 
 
+#Create Total Column
+hosp_bed_add_total <- data.frame(hosp_bed_drop_weekday) %>%
+  mutate(Total = (Anchorage + Gulf.Coast + Interior + Matanuska.Susitna + Northern + Southeast + Southwest))
+
+
 #Set Final DataFrame
-hosp_bed_occupied <- data.frame(hosp_bed_drop_weekday)
-
-
-
-#TEST 
-
-hosp_test <- data.frame(hosp_bed_select_cols)
-hosp_test <- hosp_test %>%
-  mutate(Survey.Date = as.Date(hosp_test$Survey.Date, "%m/%d/%Y")) %>%
-  mutate(Weekday = weekdays(Survey.Date)) %>%
-  filter(Weekday == "Saturday")
+hosp_bed_occupied <- data.frame(hosp_bed_add_total)
 ```
 
 
@@ -827,85 +822,97 @@ Alert levels are based on case report date. The case rates in the Kusilvak and B
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
+<!-- TITLE AND SUBTITLE  FOR HOSPITAL CAPACITY GRAPH -->
+<p style="font-family: Open Sans; font-size: 22px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+Hospital Beds Occupied by Persons with COVID-19 by Region</b></p>
+
+<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+For clarity of display, the number of hospital beds occupied is shown for each Saturday. For more data on hospital capacity please visit the Hospital Dashboard or the Hospital Data Tables. All data are preliminary and subject to change first.</p>
 
 ```{r, Hospital Capacity Over Time Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
 hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
   
-  add_trace(
-    name = "Anchorage",
-    type = "scatter",
-    mode = "line",
-    x = ~Survey.Date,
-    y = ~Anchorage,
-    line=list(
-      color='#1c3d4b'
-      )
-  ) %>%
-  
   
   add_trace(
-    name = "Gulf Coast",
-    type = "scatter",
-    mode = "line",
+    name = "Southwest",
+    type = "bar",
     x = ~Survey.Date,
-    y = ~Gulf.Coast,
-    line=list(
-      color='#2a5b71'
-      )
-  ) %>%
-  
-  add_trace(
-    name = "Interior",
-    type = "scatter",
-    mode = "line",
-    x = ~Survey.Date,
-    y = ~Interior,
-    line=list(
-      color='#387a96'
-      )
-  ) %>%
-  
-  add_trace(
-    name = "Matanuska - Susitna",
-    type = "scatter",
-    mode = "line",
-    x = ~Survey.Date,
-    y = ~Matanuska.Susitna,
-    line=list(
-      color='#4698bc')
-  ) %>%
-  
-  add_trace(
-    name = "Northern",
-    type = "scatter",
-    mode = "line",
-    x = ~Survey.Date,
-    y = ~Northern,
-    line=list(
-      color='#6badc9')
+    y = ~Southwest,
+    marker=list(
+      color='#460202')
   ) %>%
   
   add_trace(
     name = "Southeast",
-    type = "scatter",
-    mode = "line",
+    type = "bar",
     x = ~Survey.Date,
     y = ~Southeast,
-    line=list(
-      color='#90c1d7')
+    marker=list(
+      color='#690202')
   ) %>%
   
   add_trace(
-    name = "Southwest",
+    name = "Northern",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Northern,
+    marker=list(
+      color='#8c0303')
+  ) %>%
+  
+  add_trace(
+    name = "Matanuska - Susitna",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Matanuska.Susitna,
+    marker=list(
+      color='#a81818')
+  ) %>%
+  
+  add_trace(
+    name = "Interior",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Interior,
+    marker=list(
+      color='#f24949'
+      )
+  ) %>%
+  
+  add_trace(
+    name = "Gulf Coast",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Gulf.Coast,
+    marker=list(
+      color='#ed8080'
+      )
+  ) %>%
+  
+  add_trace(
+    name = "Anchorage",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Anchorage,
+    marker=list(
+      color='#fab6b6'
+      )
+  ) %>%
+  
+  add_trace(
+    name = "Total",
     type = "scatter",
     mode = "line",
     x = ~Survey.Date,
-    y = ~Southwest,
+    y = ~Total,
     line=list(
-      color='#b5d6e4')
+      color='rgba(0,0,0,0)'
+      ),
+    hovertemplate = "<b>%{y}</b>",
+    showlegend = FALSE
   ) %>%
   
-  
+
   layout(
     
     title = list(
@@ -936,8 +943,10 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
       x = .03, 
       y = .97),
    
-    hovermode = "x unified"
-    
+    hovermode = "x unified",
+    hovertemplate = ~paste("</br> %{x}",
+                           "<br> %{y:,}"),
+    barmode = "stack"
                               
   )
 
