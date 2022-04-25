@@ -538,15 +538,27 @@ hosp_bed_occupied <- data.frame(hosp_bed_add_total)
 
 
 
-```{r, Proccess Data for Vaccinated Vs Unvcaccinated Bar Graphs Past 6 Weeks, include = FALSE}
+```{r, Proccess Data for Vaccinated Vs Unvcaccinated Hospitalization Rate, include = FALSE}
 
+#Pull Data from VPN Public Health Folder
+vac_unvac_hosp_data_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/Vaccinated vs Unvaccinated/Vac vs Unvac Hospitalization Rate/four_week_hosp_IRs_table_2022-04-21.csv"
+
+vac_unvac_hosp_data <- read.csv(vac_unvac_hosp_data_filepath)
+
+
+
+#
 ```
 
 
 
 
-```{r, Proccess Data for Vaccinated Vs Unvcaccinated Line Charts Past 38 Weeks, include = FALSE}
+```{r, Proccess Data for Vaccinated Vs Unvcaccinated Case Rates, include = FALSE}
 
+#Pull Data from VPN Public Health Folder
+vac_unvac_case_data_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/Vaccinated vs Unvaccinated/Vac vs Unvac Case Rate/weekly_case_IRs_table_2022-04-21.csv"
+
+vac_unvac_case_data <- read.csv(vac_unvac_case_data_filepath)
 ```
 
 
@@ -670,9 +682,6 @@ cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
         
       
     legend = list(x = .72, y = .95)
-    
-    
-    #margin = list(l = 50, r = 20, t = 80, b = 0)
     
   )
 
