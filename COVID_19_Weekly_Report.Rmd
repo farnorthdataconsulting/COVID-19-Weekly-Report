@@ -854,8 +854,12 @@ Alert levels are based on case report date. The case rates in the Kusilvak and B
 
 * As of March 14, 2022, there were 38 persons with COVID-19 in Alaska hospitals, accounting for 3.1% of all hospitalized persons. Visit the Hospital Dashboard for more data.
 
+
+
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+
+
 
 <!-- TITLE AND SUBTITLE  FOR HOSPITAL CAPACITY GRAPH -->
 <p style="font-family: Open Sans; font-size: 22px; color: #000000; text-align: left; line-height: 1.4em;"><b>
@@ -865,6 +869,32 @@ Hospital Beds Occupied by Persons with COVID-19 by Region</b></p>
 For clarity of display, the number of hospital beds occupied is shown for each Saturday. For more data on hospital capacity please visit the Hospital Dashboard or the Hospital Data Tables. All data are preliminary and subject to change first.</p>
 
 ```{r, Hospital Capacity Over Time Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+
+#Set Max Variable for Highlights
+max_search <- select(hosp_bed_occupied, -c(Survey.Date))
+max <- 0
+
+for (region in colnames(max_serach)){
+  region_select <- select(max_search, region)
+  max_region <- max(region_select)
+  if (max_region >= max){
+    max <- max_region
+  }
+}
+
+max <- max + 10
+
+
+
+#Find Most Current Date for Omicron Highlight
+#IF OMICRON HAS FINAL DATE, DELETE SECTION AND ADD FINAL DATE TO HIGHLIGHT SECTION IN LAYOUT
+max_date_search <- select(hosp_bed_occupied, Survey.Date)
+max_date_search$Survey.Date <- as.Date(max_date_search$Survey.Date, "%Y-%m-%d")
+max_date <- max(max_date_search$Survey.Date)
+max_date <- format(max_date, "%Y-%m-%d")
+
+
+#Generate Graph
 hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
   
   
@@ -961,11 +991,48 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
         size = 20)
       ),
     
+    shapes = list(
+      
+      #DELTA HIGHLIGHT
+      list(type = "rect",
+      fillcolor = "#558baf",
+      line = list(color = "rgba(0,0,0,0)"),
+      opacity = .2,
+      x0 = "2021-07-04",
+      x1 = "2021-12-11",
+      xref = "x",
+      y0 = 0,
+      y1 = max,
+      yref = "y",
+      layer = "below"
+      ),
+      
+      
+      #OMICRON HIGHLIGHT
+      list(type = "rect",
+      fillcolor = "#377f64",
+      line = list(color = "rgba(0,0,0,0)"),
+      opacity = .2,
+      x0 = "2021-12-26",
+      x1 = max_date, #SET FINAL DATE WHEN OFFICIAL END OF OMICRON DETERMINED
+      xref = "x",
+      y0 = 0,
+      y1 = max,
+      yref = "y",
+      layer = "below"
+      )
+      
+    ),
+    
+    
+    #Set X AXIS TITLE
     xaxis = list(
       title = "",
       text = "%{y:,}"
     ),
     
+    
+    #SET YAXIS TITLE
     yaxis = list(
       title = "",
       tickformat = ",",
@@ -973,14 +1040,18 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
       
     ),
         
-      
+    
+    #SET LEGEND LOCATION  
     legend = list(
       x = .03, 
       y = .97),
    
+    
+    #SET UNIFIED LEGEND HOVER
     hovermode = "x unified",
-    hovertemplate = ~paste("</br> %{x}",
-                           "<br> %{y:,}"),
+    
+    
+    #STACK BARS
     barmode = "stack"
                               
   )
@@ -990,6 +1061,8 @@ hosp_bed_graph
 ```
 
 ##### Get the Data <a href="url">Here</a>
+
+
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
