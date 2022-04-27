@@ -1207,7 +1207,7 @@ vac_unvac_hosp_graph <- plot_ly(vac_unvac_hosp_data, hovertemplate = "%{y:.2f}")
     ),
     
     yaxis = list(
-      title = ""
+      title = "COVID-19 Hospitalizations per 100,000 People per Day"
     ),
     
     
@@ -1293,7 +1293,7 @@ vac_unvac_case_graph <- plot_ly(vac_unvac_case_data, hovertemplate = "%{y:.2f}")
     ),
     
     yaxis = list(
-      title = ""
+      title = "COVID-19 Cases per 100,000 People per Day"
     ),
       
     hovermode = "x unified"
