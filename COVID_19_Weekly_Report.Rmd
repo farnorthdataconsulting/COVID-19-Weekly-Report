@@ -661,8 +661,8 @@ cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
     marker = list(
       color = "rgb(212, 70, 47)"
     ),
-    hovertemplate = ~paste("</br> %{x}",
-                           "<br> %{y:,}")
+    hoverinfo = "y"
+                           
   ) %>%
 
 
@@ -675,8 +675,7 @@ cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
     marker = list(
       color = "rgb(179, 179, 179)"
     ),
-    hovertemplate = ~paste("</br> %{x}",
-                           "<br> %{y:,}")
+     hoverinfo = "y"
   ) %>%
   
   
@@ -708,7 +707,6 @@ cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
         
       
     legend = list(x = .72, y = .95)
-    
   )
 
 cases_onset_graph
@@ -874,7 +872,7 @@ For clarity of display, the number of hospital beds occupied is shown for each S
 max_search <- select(hosp_bed_occupied, -c(Survey.Date))
 max <- 0
 
-for (region in colnames(max_serach)){
+for (region in colnames(max_search)){
   region_select <- select(max_search, region)
   max_region <- max(region_select)
   if (max_region >= max){
@@ -897,7 +895,7 @@ max_date <- format(max_date, "%Y-%m-%d")
 #Generate Graph
 hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
   
-  
+  #ADD SOUTHWEST
   add_trace(
     name = "Southwest",
     type = "bar",
@@ -907,6 +905,7 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
       color='#460202')
   ) %>%
   
+  #ADD SOUTHEAST BARS
   add_trace(
     name = "Southeast",
     type = "bar",
@@ -916,6 +915,7 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
       color='#690202')
   ) %>%
   
+  #ADD NORTHERN BARS
   add_trace(
     name = "Northern",
     type = "bar",
@@ -925,6 +925,7 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
       color='#8c0303')
   ) %>%
   
+  #ADD MATANUSKA SUSITNA BARS
   add_trace(
     name = "Matanuska - Susitna",
     type = "bar",
@@ -934,6 +935,7 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
       color='#a81818')
   ) %>%
   
+  #ADD Interior BARS
   add_trace(
     name = "Interior",
     type = "bar",
@@ -944,6 +946,7 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
       )
   ) %>%
   
+  #ADD GULF COAST BARS
   add_trace(
     name = "Gulf Coast",
     type = "bar",
@@ -954,6 +957,7 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
       )
   ) %>%
   
+  #ADD ANCHORAGE BARS
   add_trace(
     name = "Anchorage",
     type = "bar",
@@ -964,6 +968,7 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
       )
   ) %>%
   
+  #ADD TOTALS
   add_trace(
     name = "Total",
     type = "scatter",
@@ -978,6 +983,8 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
   ) %>%
   
 
+  
+  #SET LAYOUT
   layout(
     
     title = list(
@@ -991,6 +998,43 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
         size = 20)
       ),
     
+    
+    
+    #ADD HIGHLIGHT TAGS
+    annotations = list(
+      
+      #DELTA TAG
+      list(
+        text = "<b>DELTA</b>",
+        font = list(
+          size = 12,
+          color = "#494949"
+        ),
+        xref = "x",
+        x = "2021-07-31",
+        yref = "paper",
+        y = .98,
+        align = "left",
+        showarrow = FALSE),
+      
+      #OMICRON TAG
+      list(
+        text = "<b>OMICRON</b>",
+        font = list(
+          size = 12,
+          color = "#494949"
+        ),
+        xref = "x",
+        x = "2022-02-03",
+        yref = "paper",
+        y = .98,
+        align = "left",
+        showarrow = FALSE)
+      ),
+    
+    
+    
+    #ADD HIGHLIGHTS
     shapes = list(
       
       #DELTA HIGHLIGHT
@@ -1006,6 +1050,7 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
       yref = "y",
       layer = "below"
       ),
+      
       
       
       #OMICRON HIGHLIGHT
@@ -1088,9 +1133,9 @@ hosp_bed_graph
 COVID-19 Hospitalization Rates by Vaccination Status by Week</b></p>
 
 <p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
-<b> NEED TEXT THAT GOES HERE</b></p>
+Age-adjusted COVID-19 hospitalizations per 100,000 people per day by COVID-19 vaccination status and aggregated into 4-week periods based on date of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p>
 
-```{r, Vaccination Vs Unvaccinated Hospitalization Rate Bar Charts, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+```{r, Vaccination Vs Unvaccinated Hospitalization Rate Line Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
 
 #Create list of Date to order graph
 date_list <- list(vac_unvac_hosp_data$Date)
@@ -1102,38 +1147,48 @@ vac_unvac_hosp_graph <- plot_ly(vac_unvac_hosp_data, hovertemplate = "%{y:.2f}")
   #Add Up to Date
   add_trace(
     name = "Up to Date",
-    type = "bar",
+    type = "scatter",
+    mode = "lines+markers",
     x = ~Date,
     y = ~Up.to.Date,
     marker = list(
-      width = 3,
+      color = "#00dca6",
+      size = 5),
+    line = list(
+      width = 5,
       color = "#00dca6"
     )
     ) %>%
   
   add_trace(
     name = "Fully Vaccinated",
-    type = "bar",
+    type = "scatter",
+    mode = "lines+markers",
     x = ~Date,
     y = ~Full.Vax,
     marker = list(
-      width = 3,
-      color = "#ad95dc"
-    )
+      color = "#ad95dc",
+      size = 5),
+    line = list(
+      width = 5,
+      color = "#ad95dc")
     ) %>%
   
   add_trace(
     name = "Unvaccinated",
-    type = "bar",
-   x = ~Date,
+    type = "scatter",
+    mode = "lines+markers",
+    x = ~Date,
     y = ~Unvax,
     marker = list(
-      width = 3,
-      color = "#1d81a2"
-    )
+      color = "#1d81a2",
+      size = 5),
+    line = list(
+      width = 5,
+      color = "#1d81a2")
     ) %>%
   
-  
+  #1d81a2
   layout(
      legend = list(
       x = .78, 
@@ -1155,11 +1210,8 @@ vac_unvac_hosp_graph <- plot_ly(vac_unvac_hosp_data, hovertemplate = "%{y:.2f}")
       title = ""
     ),
     
-    barmode = "group",
     
-    hovermode = "x unified",
-    
-    spikedistance = 0
+    hovermode = "x unified"
   )
 
 
@@ -1277,6 +1329,7 @@ vac_unvac_case_graph
 
 
 
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
