@@ -632,9 +632,9 @@ vac_unvac_case_data <- vac_unvac_case_data %>%
 
 * The intensity of COVID-19 transmission varies between communities outside the largest boroughs. Trajectories are mixed, with COVID-19 cases declining in many boroughs and census areas but increasing in others. Regardless, absolute levels of transmission remain high in many areas.
 
-* The Omicron variant accounts for effectively all SARS-CoV-2 circulating in Alaska. An increasing proportion of COVID-19 cases in Alaska are caused by the BA.2 lineage (a sub-type of Omicron). Visit Alaska’s SARS-CoV-2 Genomics Dashboard to learn more.
+* The Omicron variant accounts for effectively all SARS-CoV-2 circulating in Alaska. An increasing proportion of COVID-19 cases in Alaska are caused by the BA.2 lineage (a sub-type of Omicron). Visit Alaska’s SARS-CoV-2 <a href="https://akvariants.github.io/" target="_blank">Genomics Dashboard</a> to learn more.
 
-* To learn more about COVID-19 cases, hospitalizations, and deaths due to COVID-19 in Alaska, visit the Cases Dashboard or the monthly report. The cases dashboard includes demographic information on cases and the monthly report includes demographic information on hospitalizations and deaths.
+* To learn more about COVID-19 cases, hospitalizations, and deaths due to COVID-19 in Alaska, visit the <a href="https://experience.arcgis.com/experience/af2efc8bffbf4cdc83c2d1a134354074/?form=MY01SV&OCID=MY01SV" target="_blank">Cases Dashboard</a> or the <a href="https://dhss.alaska.gov/dph/Epi/id/siteassets/pages/HumanCoV/COVID_monthly_update.pdf" target="_blank">monthly report</a>. The cases dashboard includes demographic information on cases and the monthly report includes demographic information on hospitalizations and deaths.
 
 
 <p>&nbsp;</p>
@@ -850,7 +850,7 @@ Alert levels are based on case report date. The case rates in the Kusilvak and B
 
 * Patient Care Strategies for Scare Resource Situations are currently not being utilized by any facility in Alaska. However, given the continued limited capacity of some facilities, the Crisis Care Committee continues to meet to monitor the situation and remains available to assist facilities and DHSS should the need arise.
 
-* As of March 14, 2022, there were 38 persons with COVID-19 in Alaska hospitals, accounting for 3.1% of all hospitalized persons. Visit the Hospital Dashboard for more data.
+* As of March 14, 2022, there were 38 persons with COVID-19 in Alaska hospitals, accounting for 3.1% of all hospitalized persons. Visit the <a href="https://experience.arcgis.com/experience/f21f964c046c400baad4ad78e06ceb25/" target="_blank">Hospital Dashboard</a> for more data.
 
 
 
@@ -1118,9 +1118,9 @@ hosp_bed_graph
 
 
 ### COVID-19 and Vaccination {.unlisted .unnumbered}
-* 71.2% of Alaska residents aged ≥5 years have received at least one dose of a COVID-19 vaccine. Among those who completed the primary vaccine series, 50.2% of Alaska residents ≥18 years have received their booster. Learn more about COVID-19 vaccination coverage in Alaska on the Vaccine Dashboard. Learn more about COVID-19 vaccines.
+* 71.2% of Alaska residents aged ≥5 years have received at least one dose of a COVID-19 vaccine. Among those who completed the primary vaccine series, 50.2% of Alaska residents ≥18 years have received their booster. Learn more about COVID-19 vaccination coverage in Alaska on the <a href="https://experience.arcgis.com/experience/a7e8be4adbe740a1bad1393894ee4075/" target="_blank">Vaccine Dashboard</a>. Learn more about <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/vaccineappointments.aspx" target="_blank">COVID-19 vaccines</a>.
 
-* Vaccines help protect against infection and against severe disease, especially when a person is up to date on vaccinations. During the 4-week period from February 6, 2022–March 5, 2022, unvaccinated Alaskans were 7.3 times more likely to be hospitalized due to COVID-19 than Alaskans who are up to date on COVID-19 vaccination (i.e., completed the primary series and received a booster dose, if eligible) and 2.9 times more likely to be hospitalized due to COVID-19 than Alaskans who completed the primary vaccination series but are not up to date. These estimates are lagged by one week to partially account for the time it takes to document hospitalizations. (See the monthly report for more data and analysis through January.)
+* Vaccines help protect against infection and against severe disease, especially when a person is up to date on vaccinations. During the 4-week period from February 6, 2022–March 5, 2022, unvaccinated Alaskans were 7.3 times more likely to be hospitalized due to COVID-19 than Alaskans who are up to date on COVID-19 vaccination (i.e., completed the primary series and received a booster dose, if eligible) and 2.9 times more likely to be hospitalized due to COVID-19 than Alaskans who completed the primary vaccination series but are not up to date. These estimates are lagged by one week to partially account for the time it takes to document hospitalizations. (See the <a href="https://dhss.alaska.gov/dph/Epi/id/siteassets/pages/HumanCoV/COVID_monthly_update.pdf" target="_blank">monthly report</a> for more data and analysis through January.)
 
 
 
@@ -1235,6 +1235,8 @@ vac_unvac_hosp_graph
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
+
+
 <!-- TITLE AND SUBTITLE  FOR VACCINATED VS UNVACCINATED CASE RATES -->
 <p style="font-family: Open Sans; font-size: 22px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 COVID-19 Case Rates by Vaccination Status by Week</b></p>
@@ -1307,10 +1309,15 @@ vac_unvac_case_graph
 ##### Get the Data <a href="url">Here</a>
 
 
+
+
+
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+
+
 
 
 
@@ -1321,7 +1328,7 @@ vac_unvac_case_graph
 24% of Alaskans aged ≥10 years have been vaccinated against seasonal influenza. It is not too late to get vaccinated against influenza.
 
 
-* Learn more in the weekly Alaska Influenza Snapshot.
+* Learn more in the weekly <a href="https://dhss.alaska.gov/dph/Epi/id/SiteAssets/Pages/influenza/trends/Snapshot.pdf" target="_blank">Alaska Influenza Snapshot.</a> 
 
 <p>&nbsp;</p>
 
@@ -1365,9 +1372,11 @@ vac_unvac_case_graph
 ## New Updates
 ### Updates to protect yourself and your family {.unlisted .unnumbered}
 
-* Vaccine boosters: Everyone 12 or older should get a COVID-19 vaccine booster if it's been five months since receiving the Pfizer or Moderna vaccines or two months since receiving the Johnson & Johnson vaccine. People over the age of 50 and some immunocompromised individuals may receive a second mRNA booster (Pfizer or Moderna) four months after their first booster dose. Additionally, people who have received the Johnson & Johnson vaccine for both their primary dose and booster dose may receive a second booster dose using an mRNA vaccine. Pfizer or Moderna vaccine boosters are preferred. Individuals aged 12-17 can receive a Pfizer booster only.
+*<b>Treatments for COVID-19 are available and work best when given as soon as possible after symptoms start.</b> If you test positive and you’re at increased risk for severe COVID-19, ask a health care provider about treatment options. If you have COVID-like symptoms but test negative on an at-home test, you could still have COVID-19. To be sure, either test again with an antigen test 2 days after your first test or consider getting a molecular test as soon as possible if you are at high-risk for complications. <a href="https://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/outpatienttreatment.aspx" target="_blank">Learn more about COVID-19 treatments</a> and <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcovid-19-therapeutics-locator-dhhs.hub.arcgis.com%2F&data=05%7C01%7Cellen.flannery%40alaska.gov%7Cd1bf1aff0dd8483bf1f808da2407b619%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637861913073180888%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=osqitqGyVyuTIM2y%2Fn5YB8oQyqSZkcJjIm7lhyOUaOQ%3D&reserved=0" target="_blank">where you can find COVID-19 treatments</a>
 
-* DHSS Community Case Rates: To complement the CDC’s Community Levels tool, DHSS has introduced a new Community Case Rates tool. Both tools can help individuals, organizations, and communities make decisions about prevention measures. The Alert Levels on the dashboard have been retired and replaced by Community Case Rates.
+* Vaccine boosters: <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/vaccineappointments.aspx" target="_blank">Everyone 12 or older should get a COVID-19 vaccine booster</a> if it's been five months since receiving the Pfizer or Moderna vaccines or two months since receiving the Johnson & Johnson vaccine. <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.cdc.gov%2Fmedia%2Freleases%2F2022%2Fs0328-covid-19-boosters.html&data=04%7C01%7Cellen.flannery%40alaska.gov%7C4e0ae73614ba4e5a9a6c08da14238354%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637844440015039996%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&sdata=qQQJvspEWDPhMqKE1crS5tgyR3Bfw4tNUXkESFaaRDI%3D&reserved=0" target="_blank">People over the age of 50 and some immunocompromised individuals may receive a second mRNA booster</a> (Pfizer or Moderna) four months after their first booster dose. Additionally, people who have received the Johnson & Johnson vaccine for both their primary dose and booster dose may receive a second booster dose using an mRNA vaccine. Pfizer or Moderna vaccine boosters are preferred. Individuals aged 12-17 can receive a Pfizer booster only.
+
+* DHSS Community Case Rates: To complement the CDC’s <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.cdc.gov%2Fcoronavirus%2F2019-ncov%2Fscience%2Fcommunity-levels.html&data=04%7C01%7Cellen.flannery%40alaska.gov%7C3d29985f77e742abeef108da17fd5cd1%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637848674199244662%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&sdata=S7%2BBKdADGRkIiIE378LCCYb37jCxhS0M%2BoUC%2FMelW8I%3D&reserved=0" target="_blank">Community Levels tool</a> , DHSS has introduced a new <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/alertlevels.aspx" target="_blank">Community Case Rates tool.</a>  Both tools can help individuals, organizations, and communities make decisions about prevention measures. The Alert Levels on the <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fexperience.arcgis.com%2Fexperience%2Faf2efc8bffbf4cdc83c2d1a134354074%2F&data=04%7C01%7Cellen.flannery%40alaska.gov%7C3d29985f77e742abeef108da17fd5cd1%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637848674199244662%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&sdata=a2zKubi3NzByu%2Bw%2Fmh43uLrP6kZMY7%2BCNRsw2z2lLDI%3D&reserved=0" target="_blank">dashboard</a> have been retired and replaced by Community Case Rates.
 
 * Ask a health care provider about treatment: If you test positive and you’re at increased risk for severe COVID, ask a health care provider about treatment options. Treatments can reduce the risk of hospitalization and they work best when given soon after symptoms start. Learn more about COVID-19 treatments and where you can find COVID-19 treatments.
 
@@ -1382,20 +1391,20 @@ vac_unvac_case_graph
 
 ## Information and Resources
 
-* The State of Alaska COVID-19 vaccines update page
+* The State of Alaska <a href="http://dhss.alaska.gov/dph/epi/id/pages/COVID-19/vaccine.aspx" target="_blank">COVID-19 vaccines update page</a> 
 
-* The State of Alaska COVID-19 information page provides more information about the virus and how individuals and businesses can protect themselves and others from transmission. 
+* The State of Alaska <a href="http://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/default.aspx" target="_blank">COVID-19 information page</a> provides more information about the virus and how individuals and businesses can protect themselves and others from transmission. 
 
-* The DHSS Business and Employer Toolkits page has communications resources for any organization that wants to keep workers, partners, clients, and customers informed about COVID-19.
+* The DHSS <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/business.aspx" target="_blank">Business and Employer Toolkits</a> page has communications resources for any organization that wants to keep workers, partners, clients, and customers informed about COVID-19.
 
-* DHSS COVID-19 Communication Toolkit provides PSAs, flyers, and social media graphics.
-** Learn more about the importance of physical activity, highlighted by our Play Every Day and our Healthy You 2022 campaigns: Play Every Day.
+* DHSS <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/shareables.aspx" target="_blank">COVID-19 Communication Toolkit</a> provides PSAs, flyers, and social media graphics.
+** Learn more about the importance of physical activity, highlighted by our Play Every Day and our Healthy You 2022 campaigns: <a href="https://dhss.alaska.gov/dph/PlayEveryDay/blog/Lists/Posts/Post.aspx?ID=494&fbclid=IwAR3eQ3SmqPvlkCp2AVZaMXcgclEIDGli5HSr2K809D3rTxE_yPi-iI1zCNw" target="_blank">Play Every Day.</a>
 
-* Subscribe to the DHSS Insights blog for behind-the-scenes news about Alaska’s COVID-19 response and other efforts to protect the health and well-being of Alaskans.
+* Subscribe to the <a href="https://public.govdelivery.com/accounts/AKDHSS/subscriber/new?topic_id=AKDHSS_176" target="_blank">DHSS Insights blog</a> for behind-the-scenes news about Alaska’s COVID-19 response and other efforts to protect the health and well-being of Alaskans.
 
-* DHSS offers free presentations upon request to groups about COVID-19, the vaccines, COVID-19 prevention, or other health topics upon request. Learn more or request a presentation on our Speaker’s Bureau web page.
+* DHSS offers free presentations upon request to groups about COVID-19, the vaccines, COVID-19 prevention, or other health topics upon request. Learn more or request a presentation on our <a href="http://dhss.alaska.gov/dph/epi/id/pages/COVID-19/speakersbureau.aspx" target="_blank">Speaker’s Bureau web page.</a>
 
-* For the most up-to-date case information, see the Alaska COVID-19 Information Hub dashboard: data.coronavirus.alaska.gov. All dashboard data are updated Wednesdays (except holidays). 
+* For the most up-to-date case information, see the Alaska COVID-19 Information Hub dashboard: <a href="https://alaska-coronavirus-vaccine-outreach-alaska-dhss.hub.arcgis.com/" target="_blank">data.coronavirus.alaska.gov</a>. All dashboard data are updated Wednesdays (except <a href="http://doa.alaska.gov/calendar/" target="_blank">holidays</a>). 
 
 * For DHSS media inquiries, please contact clinton.bennett@alaska.gov
 
