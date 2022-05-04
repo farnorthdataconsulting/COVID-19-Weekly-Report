@@ -541,7 +541,7 @@ hosp_bed_occupied <- data.frame(hosp_bed_add_total)
 ```{r, Proccess Data for Vaccinated Vs Unvcaccinated Hospitalization Rate, include = FALSE}
 
 #Pull Data from VPN Public Health Folder
-vac_unvac_hosp_data_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/Vaccinated vs Unvaccinated/Vac vs Unvac Hospitalization Rate/four_week_hosp_IRs_table_2022-04-21.csv"
+vac_unvac_hosp_data_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Vaccinated vs Unvaccinated/Vac vs Unvac Hospitalization Rate/four_week_hosp_IRs_table_2022-04-21.csv"
 
 vac_unvac_hosp_data <- read.csv(vac_unvac_hosp_data_filepath)
 
@@ -568,7 +568,7 @@ vac_unvac_hosp_data <- data.frame(vac_unvac_hosp_data, stringsAsFactors = FALSE 
 ```{r, Proccess Data for Vaccinated Vs Unvcaccinated Case Rates, include = FALSE}
 
 #Pull Data from VPN Public Health Folder
-vac_unvac_case_data_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/Vaccinated vs Unvaccinated/Vac vs Unvac Case Rate/weekly_case_IRs_table_2022-04-21.csv"
+vac_unvac_case_data_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Vaccinated vs Unvaccinated/Vac vs Unvac Case Rate/weekly_case_IRs_table_2022-04-21.csv"
 
 vac_unvac_case_data <- read.csv(vac_unvac_case_data_filepath)
 
@@ -592,7 +592,44 @@ vac_unvac_case_data <- vac_unvac_case_data %>%
 
 
 
+```{r, Process Flu Cases by Week, include = FALSE}
 
+#GRAB FLU CASES BY WEEK FROM PUBLIC HEALTH DATA DASHBOARD FOLDER
+flu_weekly_cases_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Flu Cases by Week/Flu_data_week_16.csv"
+flu_weekly_cases_data <- read.csv(flu_weekly_cases_filepath)
+
+
+
+
+#Drop MMWR and Convert Dates to Datetime Index
+flu_weekly_cases_drop_and_convert <- flu_weekly_cases_data %>%
+  select(-c(MMWR..)) %>%
+  mutate(Date = as.Date(Date, "%m/%d/%Y"))
+
+
+
+
+#Rename Column Headers
+flu_weekly_cases_rename_headers <- flu_weekly_cases_drop_and_convert %>%
+  rename(Season_Current = Current.Season,
+         Season_20_21 = X20.21.Season,
+         Season_19_20 = X19.20.Season,
+         Season_18_19 = X18.19.Season,
+         Season_17_18 = X17.18.Season)
+
+
+
+#Set Final Dataset 
+flu_weekly_cases <- data.frame(flu_weekly_cases_rename_headers)
+```
+
+
+
+
+
+```{r, Emergency Department Visits Comparison, include = FALSE}
+emergecy_comp_filepath <- ""
+```
 
 
 
@@ -1332,9 +1369,116 @@ vac_unvac_case_graph
 
 <p>&nbsp;</p>
 
-<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/COVID-19-Weekly-Report/6_original.png)<center>
+```{r, Flu Cases by Week Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+flu_weekly_cases_graph = plot_ly(flu_weekly_cases) %>%
+  
+  #CURRENT SEASON
+  add_trace(
+    name = "Current Season",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Season_Current,
+    line = list(
+      color = "#ff0505",
+      width = 3
+    )
+  ) %>%
+  
+  
+  
+  #2020 - 2021 SEASON
+  add_trace(
+    name = "20' - 21' Season",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Season_20_21,
+    line = list(
+      color = "#9d9d9d",
+      width = 3
+    )
+  ) %>%
+  
+  
+  
+  #2019 - 2020 SEASON
+  add_trace(
+    name = "19' - 20' Season",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Season_19_20,
+    line = list(
+      color = "#dddddd",
+      width = 3
+    )
+  ) %>%
+  
+  
+  
+  #2018 - 2019 SEASON
+  add_trace(
+    name = "18' - 19' Season",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Season_18_19,
+    line = list(
+      color = "#000000",
+      width = 3
+    )
+  ) %>%
+  
+  
+  
+  #2017 - 2018 SEASON
+  add_trace(
+    name = "17' - 18' Season",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Season_17_18,
+    line = list(
+      color = "#727272",
+      width = 3
+    )
+  ) %>%
+  
+  
+  
+  
+  #SET LAYOUT
+  layout(
+    
+    #Set X Axis
+    xaxis = list(
+      title = ''
+    ),
+    
+    
+    
+    #Set Y Axis
+    yaxis = list(
+      title = "Number of Lab Reports"
+    ),
+      
+      
+    #Set Hover Selector
+    hovermode = "x unified",
+    
+    
+    legend = list(
+      x = .05,
+      y = .98
+    )
+  )
 
 
+
+
+flu_weekly_cases_graph
+```
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -1358,7 +1502,10 @@ vac_unvac_case_graph
 * ILI levels increased in December but have since decreased from the late-December peak, remaining steady over the last few weeks.
 
 <p>&nbsp;</p>
-<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/COVID-19-Weekly-Report/7_original.jpg)<center>
+
+
+```{r, Emergency Department Comparison, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+```
 
 
 
