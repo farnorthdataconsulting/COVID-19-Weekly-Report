@@ -1480,6 +1480,14 @@ flu_weekly_cases_graph = plot_ly(flu_weekly_cases) %>%
 flu_weekly_cases_graph
 ```
 
+<p style="font-family: Open Sans; font-size: 14px; color: #000000; text-align: left; line-height: 1.4em;">
+Positive influenza lab reports in Alaska by week of specimen collection for the 2017-2018 influenza season through present. The current season through April 16, 2022 is shown in red.</p>
+
+
+##### Get the Data <a href="url">Here</a>
+
+
+
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -1519,7 +1527,7 @@ flu_weekly_cases_graph
 ## New Updates
 ### Updates to protect yourself and your family {.unlisted .unnumbered}
 
-*<b>Treatments for COVID-19 are available and work best when given as soon as possible after symptoms start.</b> If you test positive and you’re at increased risk for severe COVID-19, ask a health care provider about treatment options. If you have COVID-like symptoms but test negative on an at-home test, you could still have COVID-19. To be sure, either test again with an antigen test 2 days after your first test or consider getting a molecular test as soon as possible if you are at high-risk for complications. <a href="https://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/outpatienttreatment.aspx" target="_blank">Learn more about COVID-19 treatments</a> and <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcovid-19-therapeutics-locator-dhhs.hub.arcgis.com%2F&data=05%7C01%7Cellen.flannery%40alaska.gov%7Cd1bf1aff0dd8483bf1f808da2407b619%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637861913073180888%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=osqitqGyVyuTIM2y%2Fn5YB8oQyqSZkcJjIm7lhyOUaOQ%3D&reserved=0" target="_blank">where you can find COVID-19 treatments</a>
+* <b>Treatments for COVID-19 are available and work best when given as soon as possible after symptoms start.</b> If you test positive and you’re at increased risk for severe COVID-19, ask a health care provider about treatment options. If you have COVID-like symptoms but test negative on an at-home test, you could still have COVID-19. To be sure, either test again with an antigen test 2 days after your first test or consider getting a molecular test as soon as possible if you are at high-risk for complications. <a href="https://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/outpatienttreatment.aspx" target="_blank">Learn more about COVID-19 treatments</a> and <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcovid-19-therapeutics-locator-dhhs.hub.arcgis.com%2F&data=05%7C01%7Cellen.flannery%40alaska.gov%7Cd1bf1aff0dd8483bf1f808da2407b619%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637861913073180888%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=osqitqGyVyuTIM2y%2Fn5YB8oQyqSZkcJjIm7lhyOUaOQ%3D&reserved=0" target="_blank">where you can find COVID-19 treatments</a>
 
 * Vaccine boosters: <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/vaccineappointments.aspx" target="_blank">Everyone 12 or older should get a COVID-19 vaccine booster</a> if it's been five months since receiving the Pfizer or Moderna vaccines or two months since receiving the Johnson & Johnson vaccine. <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.cdc.gov%2Fmedia%2Freleases%2F2022%2Fs0328-covid-19-boosters.html&data=04%7C01%7Cellen.flannery%40alaska.gov%7C4e0ae73614ba4e5a9a6c08da14238354%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637844440015039996%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&sdata=qQQJvspEWDPhMqKE1crS5tgyR3Bfw4tNUXkESFaaRDI%3D&reserved=0" target="_blank">People over the age of 50 and some immunocompromised individuals may receive a second mRNA booster</a> (Pfizer or Moderna) four months after their first booster dose. Additionally, people who have received the Johnson & Johnson vaccine for both their primary dose and booster dose may receive a second booster dose using an mRNA vaccine. Pfizer or Moderna vaccine boosters are preferred. Individuals aged 12-17 can receive a Pfizer booster only.
 
@@ -1558,6 +1566,60 @@ flu_weekly_cases_graph
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+
+
+
+
+
+## Echo Sessions
+
+<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/COVID-19-Weekly-Report/echo-banner.png)<center>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<center> <a href="http://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/echo.aspx" target="_blank">Session information and recordings of previous ECHO sessions</a> <center>
+
+<center> <a href="http://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/echo.aspx" target="_blank">Subscribe to ECHO calendar updates</a> | email: echo@alaskachd.org | website: <a href="https://www.uaa.alaska.edu/academics/college-of-health/departments/center-for-human-development/AK-ECHO/index.cshtml" target="_blank">akecho.org</a> <center>
+
+<p>&nbsp;</p>
+
+ECHO sessions create virtual learning communities by connecting Alaska's health experts with specific audiences on specific topics. These sessions are produced and facilitated by UAA’s Center for Human Development Alaska ECHO project in partnership with the State of Alaska, Department of Health & Social Services.
+
+<p>&nbsp;</p>
+
+Below is a selection of upcoming ECHO sessions. The <a href="https://25livepub.collegenet.com/e.aspx?calendar=uaa-echo&widget=monthlist&spudformat=xhr" target="_blank">full schedule</a> of ECHO sessions and access to COVID-19 ECHO videos and slideshows are available for download anytime on the <a href="https://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/echo.aspx" target="_blank">DHSS ECHO web page.</a>
+
+<p>&nbsp;</p>
+
+<b>School Health ECHO<b>
+Monday, 3-4 p.m., ending May 23rd (<a href="https://urldefense.com/v3/__https:/echo.zoom.us/meeting/register/tJYpd-GgrDsjH90NbUMIo_isIIQ-eEKDJwd4__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyA2_JgwDA%24" target="_blank">Register</a>)
+
+<p>&nbsp;</p>
+
+The School Health ECHO is a virtual learning network intended for professionals in the education setting (administrators, school-based nurses, etc.) to interface with a team of medical and education experts in Alaska.
+
+<p>&nbsp;</p>
+
+Vaccine ECHO for Providers
+Bi-weekly Tuesday, 2-3 p.m. (<a href="https://urldefense.com/v3/__https:/echo.zoom.us/meeting/register/tJYpd-GgrDsjH90NbUMIo_isIIQ-eEKDJwd4__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyA2_JgwDA%24" target="_blank">Register</a>)
+
+<p>&nbsp;</p>
+
+The Vaccine ECHO for providers provides planning and operation updates to vaccine providers across Alaska, while answering any questions you may have.
+
+<p>&nbsp;</p>
+
+Public Science ECHO
+Bi-weekly Wednesday, 12-12:45 p.m., ending May 25th (<a href="https://urldefense.com/v3/__https:/alaska.zoom.us/webinar/register/WN_i2syaoh3SCCTKY2U289H_Q__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyAvaKFJ30%24" target="_blank">Register</a>)
+
+<p>&nbsp;</p>
+
+The Alaska Public Health Science ECHO is a virtual learning network intended for the general public to interface with our Public Health Leadership Team to explore the science of the COVID-19 virus, other public health topics, and current best practices. Or view via concurrent livestream to Facebook: https://www.facebook.com/akechoprograms
+
+
+
+
 
 
 
