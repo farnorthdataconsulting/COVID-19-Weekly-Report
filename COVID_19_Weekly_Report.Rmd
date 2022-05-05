@@ -7,6 +7,7 @@ output:
   html_document:
     toc: yes
     toc_float: yes
+    code_folding: hide
   word_document:
     toc: yes
   pdf_document:
@@ -39,24 +40,113 @@ library(plotly)
 
 
 
+```{r, Manually Set Date Stamp, include = FALSE, class.source = 'fold-show'}
+
+#Manual Set Date Stamp for Base Files
+newFileDate <- '20220427'
+
+```
+
+
+```{r, Set Date Variables for Report Time Period, include = FALSE, class.source = 'fold-show'}
+
+#Manually Set Report Start and End Dates
+report_start <- "2022-03-27"
+
+report_end <- "2022-04-02"
+
+```
+
+
+
+
+
+```{r, Transform Date Variabls to Multiple Formats, include = FALSE}
+
+#Convert Start to Date Time
+start_datetime <- as.Date(report_start, "%Y-%m-%d")
+
+#Convert End to Date Time
+end_datetime <- as.Date(report_end, "%Y-%m-%d")
+
+
+
+#Create Start Month-Day
+start_month_day <- format(start_datetime, "%B %d")
+
+#Create End Month-Day
+end_month_day <- format(end_datetime, "%B %d")
+
+
+
+#Create Start Month-Day-Year
+start_month_day_year <- format(start_datetime, "%B %d, %Y")
+
+#Create End Month-Day
+end_month_day_year <- format(end_datetime, "%B %d, %Y")
+
+
+
+
+#Create Start - End Month Day
+start_end_month_day <- paste0(start_month_day,
+                              " - ",
+                              end_month_day)
+
+
+#Create Start - End Month Day Year
+report_year <- format(start_datetime, "%Y")
+  
+start_end_month_day_year <- paste0(start_month_day,
+                                   " - ",
+                                   end_month_day,
+                                   ", ",
+                                   report_year)
+```
+
+
+
+
+
+
+```{r, Set File Path to Base Data Folders, include = FALSE}
+base_cases_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/COVID-19 Cases/"
+
+base_hosp_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Hospital Beds Occupied/"
+
+base_vac_unvac_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Vaccinated vs Unvaccinated/"
+
+base_flu_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Flu Cases by Season/"
+
+base_emergency_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Emergency Department Visits/"
+```
+
+
+
+
+
 ```{r, Process Data for Onset Cases Over Time Graph, include = FALSE}
 
 #PULL DATA FROM AGOL AND PROCESS DATA
 
-#Pull Data from Cases Data G Hosted on AGOL
-agol_cdg_csv = 'https://www.arcgis.com/sharing/rest/content/items/41be1048137a48c992daef8c321f91c0/data'
-agol_cdg = read.csv(agol_cdg_csv)
+#Pull Cases Data from COVID-19 Cases Folder
+covid_cases_filepath = paste0(base_cases_filepath, 
+                              "covid_19_cases_", 
+                              newFileDate,
+                              ".csv")
+
+covid_cases = read.csv(covid_cases_filepath)
 
 
 #Fix Prince of Whales Name
-if ("Prince Of Wales-Hyder Census Area" %in% agol_cdg$Borough){
-  agol_cdg["Borough"][agol_cdg["Borough"] == "Prince Of Wales-Hyder Census Area"] <- "Prince of Wales-Hyder Census Area"
+if ("Prince Of Wales-Hyder Census Area" %in% covid_cases$Borough){
+  covid_cases["Borough"][covid_cases["Borough"] == "Prince Of Wales-Hyder Census Area"] <- "Prince of Wales-Hyder Census Area"
 }
 
 
 
 #Filter by Residents Only
-cases_onset_residents <- filter(agol_cdg,
+cases_onset_residents <- filter(covid_cases,
                     Resident..Y.N. == "Y")
 
 
@@ -109,19 +199,23 @@ cases_onset_by_week <- data.frame(cases_onset_set_na)
 
 #PULL DATA FROM AGOL AND PROCESS DATA
 
-#Bring in Cases Data from AGOL
-agol_cdg_csv = 'https://www.arcgis.com/sharing/rest/content/items/41be1048137a48c992daef8c321f91c0/data'
-agol_cdg = read.csv(agol_cdg_csv)
+#Bring in Cases Data from COVID-19 Cases Folder
+covid_cases_filepath = paste0(base_cases_filepath, 
+                              "covid_19_cases_", 
+                              newFileDate,
+                              ".csv")
+
+covid_cases = read.csv(covid_cases_filepath)
 
 
 #Fix Prince of Whales Name
-if ("Prince Of Wales-Hyder Census Area" %in% agol_cdg$Borough){
-  agol_cdg["Borough"][agol_cdg["Borough"] == "Prince Of Wales-Hyder Census Area"] <- "Prince of Wales-Hyder Census Area"
+if ("Prince Of Wales-Hyder Census Area" %in% covid_cases$Borough){
+  covid_cases["Borough"][covid_cases["Borough"] == "Prince Of Wales-Hyder Census Area"] <- "Prince of Wales-Hyder Census Area"
 }
 
 
 #Keep Only Cases by Report Date
-case_rate_report_date <- select(agol_cdg,
+case_rate_report_date <- select(covid_cases,
                         Date,
                         Resident..Y.N.,
                         Occurrence..Y.N.,
@@ -448,14 +542,18 @@ for (borough in case_rate_borough_list){
 
 ```{r, Process Data for Hospital Capacity Graph, include = FALSE}
 
-#Pull Hospital Data Table A from AGOL
-agol_hda_csv = "https://www.arcgis.com/sharing/rest/content/items/47554fa6f8e147d9b05f5c990ba630f6/data"
-hosp_bed_data_pull = read.csv(agol_hda_csv)
+#Pull Hospital Data from Hospital Beds Occupied Folder
+hosp_bed_filepath = paste0(base_hosp_filepath, 
+                              "hospital_beds_occupied_", 
+                              newFileDate,
+                              ".csv")
+
+hosp_bed = read.csv(hosp_bed_filepath)
 
 
 
 #Filter by GCAF
-hosp_bed_filter_gcaf <- filter(hosp_bed_data_pull,
+hosp_bed_filter_gcaf <- filter(hosp_bed,
                                Facility.Filter == 1)
 
 
@@ -540,14 +638,17 @@ hosp_bed_occupied <- data.frame(hosp_bed_add_total)
 
 ```{r, Proccess Data for Vaccinated Vs Unvcaccinated Hospitalization Rate, include = FALSE}
 
-#Pull Data from VPN Public Health Folder
-vac_unvac_hosp_data_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Vaccinated vs Unvaccinated/Vac vs Unvac Hospitalization Rate/four_week_hosp_IRs_table_2022-04-21.csv"
+#Pull Data from Vaccinated vs Unvaccinated Folder
+vac_unvac_hosp_filepath = paste0(base_vac_unvac_filepath, 
+                              "Vac vs Unvac Hospitalization Rate/four_week_hosp_IRs_table_", 
+                              newFileDate,
+                              ".csv")
 
-vac_unvac_hosp_data <- read.csv(vac_unvac_hosp_data_filepath)
+vac_unvac_hosp = read.csv(vac_unvac_hosp_filepath)
 
 
 #Edit Dataframe and Restructure for Graph
-vac_unvac_hosp_data <- vac_unvac_hosp_data %>%
+vac_unvac_hosp_data <- vac_unvac_hosp %>%
   mutate(Date = paste0(format(as.Date(start_date, "%Y-%m-%d"), "%b %d"), " - ", format(as.Date(end_date, "%Y-%m-%d"), "%b %d"))) %>%
   mutate(Up.to.Date = up_to_date.adj.hosp.rate.100K) %>%
   mutate(Full.Vax = full_vax_not_utd.adj.hosp.rate.100K) %>%
@@ -567,14 +668,17 @@ vac_unvac_hosp_data <- data.frame(vac_unvac_hosp_data, stringsAsFactors = FALSE 
 
 ```{r, Proccess Data for Vaccinated Vs Unvcaccinated Case Rates, include = FALSE}
 
-#Pull Data from VPN Public Health Folder
-vac_unvac_case_data_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Vaccinated vs Unvaccinated/Vac vs Unvac Case Rate/weekly_case_IRs_table_2022-04-21.csv"
+#Pull Data from Vaccinated vs Unvaccinated Folder
+vac_unvac_case_filepath = paste0(base_vac_unvac_filepath, 
+                              "Vac vs Unvac Case Rate/weekly_case_IRs_table_", 
+                              newFileDate,
+                              ".csv")
 
-vac_unvac_case_data <- read.csv(vac_unvac_case_data_filepath)
+vac_unvac_case = read.csv(vac_unvac_case_filepath)
 
 
 #Edit Dataframe and Restructure for Graph
-vac_unvac_case_data <- vac_unvac_case_data %>%
+vac_unvac_case_data <- vac_unvac_case %>%
   mutate(Date = as.Date(start_date, "%Y-%m-%d")) %>%
   mutate(Up.to.Date = up_to_date.adj.case.rate.100K) %>%
   mutate(Full.Vax = full_vax_not_utd.adj.case.rate.100K) %>%
@@ -594,15 +698,19 @@ vac_unvac_case_data <- vac_unvac_case_data %>%
 
 ```{r, Process Flu Cases by Week, include = FALSE}
 
-#GRAB FLU CASES BY WEEK FROM PUBLIC HEALTH DATA DASHBOARD FOLDER
-flu_weekly_cases_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Flu Cases by Week/Flu_data_week_16.csv"
-flu_weekly_cases_data <- read.csv(flu_weekly_cases_filepath)
+#Pull Data from Flu Cases by Week Folder
+flu_season_filepath = paste0(base_flu_filepath, 
+                              "flu_data_", 
+                              newFileDate,
+                              ".csv")
+
+flu_season = read.csv(flu_season_filepath)
 
 
 
 
 #Drop MMWR and Convert Dates to Datetime Index
-flu_weekly_cases_drop_and_convert <- flu_weekly_cases_data %>%
+flu_season_drop_and_convert <- flu_season %>%
   select(-c(MMWR..)) %>%
   mutate(Date = as.Date(Date, "%m/%d/%Y"))
 
@@ -610,7 +718,7 @@ flu_weekly_cases_drop_and_convert <- flu_weekly_cases_data %>%
 
 
 #Rename Column Headers
-flu_weekly_cases_rename_headers <- flu_weekly_cases_drop_and_convert %>%
+flu_season_rename_headers <- flu_season_drop_and_convert %>%
   rename(Season_Current = Current.Season,
          Season_20_21 = X20.21.Season,
          Season_19_20 = X19.20.Season,
@@ -620,7 +728,7 @@ flu_weekly_cases_rename_headers <- flu_weekly_cases_drop_and_convert %>%
 
 
 #Set Final Dataset 
-flu_weekly_cases <- data.frame(flu_weekly_cases_rename_headers)
+flu_season_cases <- data.frame(flu_season_rename_headers)
 ```
 
 
@@ -628,7 +736,32 @@ flu_weekly_cases <- data.frame(flu_weekly_cases_rename_headers)
 
 
 ```{r, Emergency Department Visits Comparison, include = FALSE}
-emergecy_comp_filepath <- ""
+
+#Pull Data from Emergency Department Visits Folder
+emerg_depart_filepath = paste0(base_emergency_filepath, 
+                              "cli_and_ili_", 
+                              newFileDate,
+                              ".csv")
+
+emerg_depart = read.csv(emerg_depart_filepath)
+
+
+
+#Convert Dates to Datetime
+emerg_depart_convert_dates <- emerg_depart %>%
+  mutate(Date = as.Date(Date, "%d%b%y"))
+
+
+
+#Rename Column Headers
+emerg_depart_rename_headers <- emerg_depart_convert_dates %>%
+  rename(ILI = X..ILI,
+         CLI = X..CLI)
+
+
+
+#Set Final Table
+emergency_department_cases <- data.frame(emerg_depart_rename_headers)
 ```
 
 
@@ -659,7 +792,7 @@ emergecy_comp_filepath <- ""
 
 ## COVID-19 
 
-### COVID-19 Case Trends {.unlisted .unnumbered}
+### <em>COVID-19 Case Trends</em> {.unlisted .unnumbered}
 
 * COVID-19 transmission continues to occur widely throughout much of Alaska, with some evidence for an upwards trajectory. Cases and hospitalizations remain far below the peak of the Omicron wave.
 
@@ -881,7 +1014,7 @@ Alert levels are based on case report date. The case rates in the Kusilvak and B
 
 
 
-### COVID-19 and Hospital Capacity {.unlisted .unnumbered}
+### <em>COVID-19 and Hospital Capacity</em> {.unlisted .unnumbered}
 
 * Hospital capacity remains limited. Large numbers of patients overall (not necessarily with COVID-19 or other respiratory viruses) relative to the number of available staff continue to create capacity challenges across the state, with some areas more affected than others.
 
@@ -1154,7 +1287,7 @@ hosp_bed_graph
 
 
 
-### COVID-19 and Vaccination {.unlisted .unnumbered}
+### <em>COVID-19 and Vaccination</em> {.unlisted .unnumbered}
 * 71.2% of Alaska residents aged ≥5 years have received at least one dose of a COVID-19 vaccine. Among those who completed the primary vaccine series, 50.2% of Alaska residents ≥18 years have received their booster. Learn more about COVID-19 vaccination coverage in Alaska on the <a href="https://experience.arcgis.com/experience/a7e8be4adbe740a1bad1393894ee4075/" target="_blank">Vaccine Dashboard</a>. Learn more about <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/vaccineappointments.aspx" target="_blank">COVID-19 vaccines</a>.
 
 * Vaccines help protect against infection and against severe disease, especially when a person is up to date on vaccinations. During the 4-week period from February 6, 2022–March 5, 2022, unvaccinated Alaskans were 7.3 times more likely to be hospitalized due to COVID-19 than Alaskans who are up to date on COVID-19 vaccination (i.e., completed the primary series and received a booster dose, if eligible) and 2.9 times more likely to be hospitalized due to COVID-19 than Alaskans who completed the primary vaccination series but are not up to date. These estimates are lagged by one week to partially account for the time it takes to document hospitalizations. (See the <a href="https://dhss.alaska.gov/dph/Epi/id/siteassets/pages/HumanCoV/COVID_monthly_update.pdf" target="_blank">monthly report</a> for more data and analysis through January.)
@@ -1370,7 +1503,7 @@ vac_unvac_case_graph
 <p>&nbsp;</p>
 
 ```{r, Flu Cases by Week Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
-flu_weekly_cases_graph = plot_ly(flu_weekly_cases) %>%
+flu_seasons_cases_graph = plot_ly(flu_season_cases) %>%
   
   #CURRENT SEASON
   add_trace(
@@ -1477,7 +1610,7 @@ flu_weekly_cases_graph = plot_ly(flu_weekly_cases) %>%
 
 
 
-flu_weekly_cases_graph
+flu_seasons_cases_graph 
 ```
 
 <p style="font-family: Open Sans; font-size: 14px; color: #000000; text-align: left; line-height: 1.4em;">
@@ -1495,7 +1628,7 @@ Positive influenza lab reports in Alaska by week of specimen collection for the 
 
 
 ## Emergency Department Visits
-### Visits with COVID-like or Influenza-like Illness {.unlisted .unnumbered}
+### <em>Visits with COVID-like or Influenza-like Illness</em> {.unlisted .unnumbered}
 
 * Syndromic surveillance consists of analyzing data on symptoms and diagnoses among patients visiting emergency departments in Alaska. The main goal is to identify trends. Unlike case-based surveillance, syndromic surveillance does not depend on laboratory testing.
 
@@ -1513,8 +1646,66 @@ Positive influenza lab reports in Alaska by week of specimen collection for the 
 
 
 ```{r, Emergency Department Comparison, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+emergency_department_graph = plot_ly(emergency_department_cases) %>%
+  
+  #Add COVID-Like Illness Line
+  add_trace(
+    name = "COVID-Like Illness",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~CLI,
+    line = list(
+      color = "#fba63b",
+      width = 3)
+    ) %>%
+      
+      
+  #Add Influenza -Like Illness Line
+  add_trace(
+    name = "Influenza-Like Illness",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~ILI,
+    line = list(
+      color = "#150fad",
+      width = 3)
+    ) %>%
+  
+  
+  
+  #Layout
+  layout(
+    
+    #SET HOVER MODE
+    hovermode = "x unified",
+    
+    #SET XAXIS
+    xaxis = list(
+      title = ""
+    ),
+    
+    
+    #SET YAXIS
+    yaxis = list(
+      title = "Percentage of Visits"
+    ),
+    
+    
+    #SET LEGEND
+    legend = list(
+      x = .05,
+      y = .98
+    )
+    
+  )
+    
+    
+  
+emergency_department_graph
 ```
-
+##### Get the Data <a href="url">Here</a>
 
 
 <p>&nbsp;</p>
@@ -1525,7 +1716,7 @@ Positive influenza lab reports in Alaska by week of specimen collection for the 
 
 
 ## New Updates
-### Updates to protect yourself and your family {.unlisted .unnumbered}
+### <em>Updates to protect yourself and your family</em> {.unlisted .unnumbered}
 
 * <b>Treatments for COVID-19 are available and work best when given as soon as possible after symptoms start.</b> If you test positive and you’re at increased risk for severe COVID-19, ask a health care provider about treatment options. If you have COVID-like symptoms but test negative on an at-home test, you could still have COVID-19. To be sure, either test again with an antigen test 2 days after your first test or consider getting a molecular test as soon as possible if you are at high-risk for complications. <a href="https://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/outpatienttreatment.aspx" target="_blank">Learn more about COVID-19 treatments</a> and <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcovid-19-therapeutics-locator-dhhs.hub.arcgis.com%2F&data=05%7C01%7Cellen.flannery%40alaska.gov%7Cd1bf1aff0dd8483bf1f808da2407b619%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637861913073180888%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=osqitqGyVyuTIM2y%2Fn5YB8oQyqSZkcJjIm7lhyOUaOQ%3D&reserved=0" target="_blank">where you can find COVID-19 treatments</a>
 
@@ -1573,14 +1764,14 @@ Positive influenza lab reports in Alaska by week of specimen collection for the 
 
 ## Echo Sessions
 
-<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/COVID-19-Weekly-Report/echo-banner.png)<center>
+<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/COVID-19-Weekly-Report/echo-banner.png)</center>
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
-<center> <a href="http://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/echo.aspx" target="_blank">Session information and recordings of previous ECHO sessions</a> <center>
+<center><a href="http://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/echo.aspx" target="_blank">Session information and recordings of previous ECHO sessions</a></center>
 
-<center> <a href="http://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/echo.aspx" target="_blank">Subscribe to ECHO calendar updates</a> | email: echo@alaskachd.org | website: <a href="https://www.uaa.alaska.edu/academics/college-of-health/departments/center-for-human-development/AK-ECHO/index.cshtml" target="_blank">akecho.org</a> <center>
+<center><a href="http://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/echo.aspx" target="_blank">Subscribe to ECHO calendar updates</a> | email: echo@alaskachd.org | website: <a href="https://www.uaa.alaska.edu/academics/college-of-health/departments/center-for-human-development/AK-ECHO/index.cshtml" target="_blank">akecho.org</a></center>
 
 <p>&nbsp;</p>
 
@@ -1592,32 +1783,39 @@ Below is a selection of upcoming ECHO sessions. The <a href="https://25livepub.c
 
 <p>&nbsp;</p>
 
-<b>School Health ECHO<b>
-Monday, 3-4 p.m., ending May 23rd (<a href="https://urldefense.com/v3/__https:/echo.zoom.us/meeting/register/tJYpd-GgrDsjH90NbUMIo_isIIQ-eEKDJwd4__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyA2_JgwDA%24" target="_blank">Register</a>)
-
-<p>&nbsp;</p>
+<b>School Health ECHO</b> <br>
+Monday, 3-4 p.m., ending May 23rd (<a href="https://urldefense.com/v3/__https:/echo.zoom.us/meeting/register/tJYpd-GgrDsjH90NbUMIo_isIIQ-eEKDJwd4__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyA2_JgwDA%24" target="_blank">Register</a>) <br>
 
 The School Health ECHO is a virtual learning network intended for professionals in the education setting (administrators, school-based nurses, etc.) to interface with a team of medical and education experts in Alaska.
 
 <p>&nbsp;</p>
 
-Vaccine ECHO for Providers
-Bi-weekly Tuesday, 2-3 p.m. (<a href="https://urldefense.com/v3/__https:/echo.zoom.us/meeting/register/tJYpd-GgrDsjH90NbUMIo_isIIQ-eEKDJwd4__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyA2_JgwDA%24" target="_blank">Register</a>)
-
-<p>&nbsp;</p>
+<b>Vaccine ECHO for Providers</b> <br>
+Bi-weekly Tuesday, 2-3 p.m. (<a href="https://urldefense.com/v3/__https:/echo.zoom.us/meeting/register/tJYpd-GgrDsjH90NbUMIo_isIIQ-eEKDJwd4__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyA2_JgwDA%24" target="_blank">Register</a>) <br>
 
 The Vaccine ECHO for providers provides planning and operation updates to vaccine providers across Alaska, while answering any questions you may have.
 
 <p>&nbsp;</p>
 
-Public Science ECHO
-Bi-weekly Wednesday, 12-12:45 p.m., ending May 25th (<a href="https://urldefense.com/v3/__https:/alaska.zoom.us/webinar/register/WN_i2syaoh3SCCTKY2U289H_Q__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyAvaKFJ30%24" target="_blank">Register</a>)
-
-<p>&nbsp;</p>
+<b>Public Science ECHO</b><br>
+Bi-weekly Wednesday, 12-12:45 p.m., ending May 25th (<a href="https://urldefense.com/v3/__https:/alaska.zoom.us/webinar/register/WN_i2syaoh3SCCTKY2U289H_Q__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyAvaKFJ30%24" target="_blank">Register</a>) <br>
 
 The Alaska Public Health Science ECHO is a virtual learning network intended for the general public to interface with our Public Health Leadership Team to explore the science of the COVID-19 virus, other public health topics, and current best practices. Or view via concurrent livestream to Facebook: https://www.facebook.com/akechoprograms
 
+<p>&nbsp;</p>
 
+<b>Healthcare Specific Situational Awareness ECHO</b><br>
+Bi-weekly Thursday, 1-2 p.m., ending May 26th (<a href="https://urldefense.com/v3/__https:/zoom.us/j/401350920__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyAfOPun44%24" target="_blank">Register</a>) <br>
+
+The Healthcare Specific Situational ECHO is a virtual learning network intended for healthcare professionals to interface with our Public Health Leadership Team to explore current best practices and the most recent information related to Public Health.
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+<p style="font-family: Open Sans; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+Alaska COVID-19 and Influenza Weekly Case Update:  `r start_end_month_day_year`</b></p>
 
 
 
