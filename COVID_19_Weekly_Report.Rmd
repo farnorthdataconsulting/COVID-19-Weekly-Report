@@ -812,11 +812,8 @@ emergency_department_cases <- data.frame(emerg_depart_rename_headers)
 
 
 <!-- TITLE AND SUBTITLE  FOR WEEKLY CASES GRAPH -->
-<p style="font-family: Open Sans; font-size: 22px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 Weekly COVID-19 Cases Among Alaskan Residents by Onset Date</b></p>
-
-<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
-Cases are attributed to symptom onset date, if recorded. Otherwise, cases are attributed to specimen collection date, report date or hospitalization date, whichever comes first.</p>
 
 ```{r, Onset Cases by Week Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
 
@@ -881,6 +878,8 @@ cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
 
 cases_onset_graph
 ```
+<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+Cases are attributed to symptom onset date, if recorded. Otherwise, cases are attributed to specimen collection date, report date or hospitalization date, whichever comes first.</p> <br>
 
 ##### Get the Data <a href="url">Here</a>
 
@@ -993,7 +992,6 @@ reactable(cases_reactable_table,
 
 ```
 <center>
-
 ##### Get the Data <a href="url">Here</a>
 
 <p style="font-family: Open Sans; font-size: 12px; color: #000000; text-align: left; line-height: 1.4em;">
@@ -1030,11 +1028,8 @@ Alert levels are based on case report date. The case rates in the Kusilvak and B
 
 
 <!-- TITLE AND SUBTITLE  FOR HOSPITAL CAPACITY GRAPH -->
-<p style="font-family: Open Sans; font-size: 22px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 Hospital Beds Occupied by Persons with COVID-19 by Region</b></p>
-
-<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
-For clarity of display, the number of hospital beds occupied is shown for each Saturday. For more data on hospital capacity please visit the Hospital Dashboard or the Hospital Data Tables. All data are preliminary and subject to change first.</p>
 
 ```{r, Hospital Capacity Over Time Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
 
@@ -1275,6 +1270,9 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
 hosp_bed_graph
 ```
 
+<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+For clarity of display, the number of hospital beds occupied is shown for each Saturday. For more data on hospital capacity please visit the Hospital Dashboard or the Hospital Data Tables. All data are preliminary and subject to change first.</p><br>
+
 ##### Get the Data <a href="url">Here</a>
 
 
@@ -1299,11 +1297,8 @@ hosp_bed_graph
 <p>&nbsp;</p>
 
 <!-- TITLE AND SUBTITLE  FOR VACCINATED VS UNVACCINATED HOSPITALIZATION RATES -->
-<p style="font-family: Open Sans; font-size: 22px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 COVID-19 Hospitalization Rates by Vaccination Status by Week</b></p>
-
-<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
-Age-adjusted COVID-19 hospitalizations per 100,000 people per day by COVID-19 vaccination status and aggregated into 4-week periods based on date of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p>
 
 ```{r, Vaccination Vs Unvaccinated Hospitalization Rate Line Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
 
@@ -1389,6 +1384,10 @@ vac_unvac_hosp_graph
 
 
 ```
+
+<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+Age-adjusted COVID-19 hospitalizations per 100,000 people per day by COVID-19 vaccination status and aggregated into 4-week periods based on date of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p><br>
+
 ##### Get the Data <a href="url">Here</a>
 
 
@@ -1408,11 +1407,8 @@ vac_unvac_hosp_graph
 
 
 <!-- TITLE AND SUBTITLE  FOR VACCINATED VS UNVACCINATED CASE RATES -->
-<p style="font-family: Open Sans; font-size: 22px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 COVID-19 Case Rates by Vaccination Status by Week</b></p>
-
-<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
-Age-adjusted COVID-19 cases per 100,000 people per day by COVID-19 vaccination status by week of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p>
 
 ```{r, Vaccination Vs Unvaccinated Case Rates Line Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
 vac_unvac_case_graph <- plot_ly(vac_unvac_case_data, hovertemplate = "%{y:.2f}") %>%
@@ -1476,6 +1472,9 @@ vac_unvac_case_graph <- plot_ly(vac_unvac_case_data, hovertemplate = "%{y:.2f}")
 
 vac_unvac_case_graph
 ```
+<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+Age-adjusted COVID-19 cases per 100,000 people per day by COVID-19 vaccination status by week of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p><br>
+
 ##### Get the Data <a href="url">Here</a>
 
 
@@ -1871,7 +1870,7 @@ h2 { /* Section Headers  */
 }
 
 h3 { /* Sub Headers  */
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   font-family: "Arial";
   color: Black;
