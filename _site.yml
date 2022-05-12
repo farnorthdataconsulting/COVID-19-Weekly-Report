@@ -5,8 +5,8 @@ name: "COVID-19-Weekly-Case-Report-Test"
     left:
     - text: "Home"
         href: index.html
-    - text: "Speed and Distance"
-        href: speed-and-distance.html
+    - text: "COVID-19 R Markdown"
+        href: COVID_19_Weekly_Report.html
   output:
     html_document:
       theme: none
