@@ -1817,9 +1817,6 @@ The Healthcare Specific Situational ECHO is a virtual learning network intended 
 Alaska COVID-19 and Influenza Weekly Case Update:  `r start_end_month_day_year`</b></p>
 
 
-
-
-
 ```{r tags fonts, include = FALSE}
 tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback", rel = "stylesheet")
 
