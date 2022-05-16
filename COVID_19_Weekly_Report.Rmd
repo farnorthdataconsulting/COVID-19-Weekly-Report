@@ -114,6 +114,9 @@ base_vac_unvac_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for
 base_flu_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Flu Cases by Season/"
 
 base_emergency_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Emergency Department Visits/"
+
+
+base_public_data_filepath <- "C:/Users/ccross/Documents/Projects/COVID-19-Weekly-Report/"
 ```
 
 
