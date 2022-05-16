@@ -116,7 +116,9 @@ base_flu_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashb
 base_emergency_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Emergency Department Visits/"
 
 
-base_public_data_filepath <- "C:/Users/ccross/Documents/Projects/COVID-19-Weekly-Report/"
+
+#UPDATE WHEN IN FINAL LOCATION!!  MUST BE UPDATED WITH REPOSITORY LOCATION!!
+base_public_data_filepath <- "C:/Users/ccross/Documents/Projects/COVID-19-Weekly-Report/Public_Data/"
 ```
 
 
@@ -188,6 +190,40 @@ cases_onset_set_na$Cases_Date_Onset[nrow(cases_onset_set_na):(nrow(cases_onset_s
 nrow(cases_onset_set_na)
 #Set Final Dataframe
 cases_onset_by_week <- data.frame(cases_onset_set_na)
+
+
+
+
+#Generate Public Data File and Save to Folder
+cases_csv_cases_onset <- cases_onset_by_week %>%
+  select(Date, Cases_Date_Onset) %>%
+  filter(Cases_Date_Onset > -1) %>%
+  mutate(Cases = Cases_Date_Onset) %>%
+  mutate(Type = "Cases by Onset Date") %>%
+  select(Date, Type, Cases)
+
+
+  
+cases_csv_prelim <- cases_onset_by_week %>%
+  select(Date, Preliminary_Data) %>%
+  filter(Preliminary_Data > -1) %>%
+  mutate(Cases = Preliminary_Data) %>%
+  mutate(Type = "Preliminary Data") %>%
+  select(Date, Type, Cases)
+
+
+
+cases_csv_dataframe <- rbind(cases_csv_cases_onset, cases_csv_prelim)
+
+
+
+#Save CSV to Public Data Folder
+write.csv(cases_csv_dataframe,
+          paste0(base_public_data_filepath, 
+                 "Cases_by_Onset_Date/cases_by_onset_date_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
 ```
 
 
@@ -533,6 +569,16 @@ for (borough in case_rate_borough_list){
           dpi= 500)
 }
 
+
+
+
+#Export Original Cases Data to Publica Data
+write.csv(covid_cases,
+          paste0(base_public_data_filepath,
+                 "Case_Rates_by_BCA/case_rates_by_bca_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
 ```
 
 
@@ -629,6 +675,17 @@ hosp_bed_add_total <- data.frame(hosp_bed_drop_weekday) %>%
 
 #Set Final DataFrame
 hosp_bed_occupied <- data.frame(hosp_bed_add_total)
+
+
+
+
+#Generate CSV for Public Data
+write.csv(hosp_bed_occupied,
+          paste0(base_public_data_filepath,
+                 "Hospital_Beds_Occupied/hospital_beds_occupied_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
 ```
 
 
@@ -659,6 +716,15 @@ vac_unvac_hosp_data <- vac_unvac_hosp %>%
 
 
 vac_unvac_hosp_data <- data.frame(vac_unvac_hosp_data, stringsAsFactors = FALSE )
+
+
+#Generate CSV for Public Data
+write.csv(vac_unvac_hosp_data,
+          paste0(base_public_data_filepath,
+                 "Hospital_Rates_by_Vaccination_Status/hospital_rates_by_vaccination_status_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
 ```
 
 
@@ -688,6 +754,15 @@ vac_unvac_case_data <- vac_unvac_case %>%
          Full.Vax,
          Unvax,
          Start.End.Tag)
+
+
+#Generate CSV for Public Data
+write.csv(vac_unvac_case_data,
+          paste0(base_public_data_filepath,
+                 "Case_Rates_by_Vaccination_Status/case_rates_by_vaccination_status_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
 ```
 
 
@@ -727,6 +802,15 @@ flu_season_rename_headers <- flu_season_drop_and_convert %>%
 
 #Set Final Dataset 
 flu_season_cases <- data.frame(flu_season_rename_headers)
+
+
+#Generate CSV for Public Data
+write.csv(flu_season_cases,
+          paste0(base_public_data_filepath,
+                 "Influenza_by_Season/influenza_by_season_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
 ```
 
 
@@ -760,6 +844,16 @@ emerg_depart_rename_headers <- emerg_depart_convert_dates %>%
 
 #Set Final Table
 emergency_department_cases <- data.frame(emerg_depart_rename_headers)
+
+
+
+#Generate CSV for Public Data
+write.csv(emergency_department_cases,
+          paste0(base_public_data_filepath,
+                 "Emergency_Department_Visists/emergency_department_visits_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
 ```
 
 
