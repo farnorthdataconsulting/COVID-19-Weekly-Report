@@ -1,7 +1,6 @@
 ---
 title: "![](C:/Users/ccross/Documents/Projects/COVID-19-Weekly-Report/logo.jpg)"
-author: Alaska Department of Health and Social Services Weekly COVID-19 and Influenva
-  Update
+author: "Alaska Department of Health and Social Services Weekly COVID-19 and Influenva Update"
 date: "March 27 – April 2, 2022"
 output:
   html_document:
@@ -1007,8 +1006,8 @@ cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
     ),
         
       
-    legend = list(x = .72, y = .95)
-  )
+    legend = list(orientation = "h"#list(x = .72, y = .95)
+  ))
 
 cases_onset_graph
 ```
