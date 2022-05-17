@@ -1,0 +1,2129 @@
+---
+title: "![](C:/Users/ccross/Documents/Projects/COVID-19-Weekly-Report/logo.jpg)"
+author: Alaska Department of Health and Social Services Weekly COVID-19 and Influenva
+  Update
+date: "March 27 – April 2, 2022"
+output:
+  html_document:
+    toc: no
+    toc_float: no
+graphics: yes
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r import libraries, include = FALSE}
+library(dplyr)
+library(reactable)
+library(htmltools)
+library(ggplot2)
+library(tidyverse)
+library(lubridate)
+library(reactablefmtr)
+library(RcppRoll)
+library(Dict)
+library(tinytex)
+library(timetk)
+library(plotly)
+```
+
+
+
+```{r, Manually Set Date Stamp, include = FALSE, class.source = 'fold-show'}
+
+#Manual Set Date Stamp for Base Files
+newFileDate <- '20220427'
+
+```
+
+
+```{r, Set Date Variables for Report Time Period, include = FALSE, class.source = 'fold-show'}
+
+#Manually Set Report Start and End Dates
+report_start <- "2022-03-27"
+
+report_end <- "2022-04-02"
+
+```
+
+
+
+
+
+```{r, Transform Date Variabls to Multiple Formats, include = FALSE}
+
+#Convert Start to Date Time
+start_datetime <- as.Date(report_start, "%Y-%m-%d")
+
+#Convert End to Date Time
+end_datetime <- as.Date(report_end, "%Y-%m-%d")
+
+
+
+#Create Start Month-Day
+start_month_day <- format(start_datetime, "%B %d")
+
+#Create End Month-Day
+end_month_day <- format(end_datetime, "%B %d")
+
+
+
+#Create Start Month-Day-Year
+start_month_day_year <- format(start_datetime, "%B %d, %Y")
+
+#Create End Month-Day
+end_month_day_year <- format(end_datetime, "%B %d, %Y")
+
+
+
+
+#Create Start - End Month Day
+start_end_month_day <- paste0(start_month_day,
+                              " - ",
+                              end_month_day)
+
+
+#Create Start - End Month Day Year
+report_year <- format(start_datetime, "%Y")
+  
+start_end_month_day_year <- paste0(start_month_day,
+                                   " - ",
+                                   end_month_day,
+                                   ", ",
+                                   report_year)
+```
+
+
+
+
+
+
+```{r, Set File Path to Base Data Folders, include = FALSE}
+base_cases_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/COVID-19 Cases/"
+
+base_hosp_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Hospital Beds Occupied/"
+
+base_vac_unvac_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Vaccinated vs Unvaccinated/"
+
+base_flu_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Flu Cases by Season/"
+
+base_emergency_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for Dashboards/COVID-19 and Flu Weekly Report/Emergency Department Visits/"
+
+
+
+#UPDATE WHEN IN FINAL LOCATION!!  MUST BE UPDATED WITH REPOSITORY LOCATION!!
+base_public_data_filepath <- "C:/Users/ccross/Documents/Projects/COVID-19-Weekly-Report/Public_Data/"
+```
+
+
+
+
+
+```{r, Process Data for Onset Cases Over Time Graph, include = FALSE}
+
+#PULL DATA FROM AGOL AND PROCESS DATA
+
+#Pull Cases Data from COVID-19 Cases Folder
+covid_cases_filepath = paste0(base_cases_filepath, 
+                              "covid_19_cases_", 
+                              newFileDate,
+                              ".csv")
+
+covid_cases = read.csv(covid_cases_filepath)
+
+
+#Fix Prince of Whales Name
+if ("Prince Of Wales-Hyder Census Area" %in% covid_cases$Borough){
+  covid_cases["Borough"][covid_cases["Borough"] == "Prince Of Wales-Hyder Census Area"] <- "Prince of Wales-Hyder Census Area"
+}
+
+
+
+#Filter by Residents Only
+cases_onset_residents <- filter(covid_cases,
+                    Resident..Y.N. == "Y")
+
+
+#Pull Only Needed Fields
+cases_onset_pull_fields <- select(cases_onset_residents, Date, Cases..Date.Onset.)
+
+
+
+#Group All Onset Counts by Date for Statewide Case Counts
+cases_onset_group_by_date <- cases_onset_pull_fields %>% 
+  group_by(Date) %>%
+  summarize(Cases_Date_Onset = sum(Cases..Date.Onset.))
+
+cases_onset_group_by_date$Date <- as.Date(cases_onset_group_by_date$Date, "%m/%d/%Y") 
+
+
+#Aggregate by Week Starting on Saturday
+cases_onset_agg_week <- summarise_by_time(
+                            cases_onset_group_by_date,
+                            .date_var = Date,
+                            .by = "week",
+                            Cases_Date_Onset = sum(Cases_Date_Onset)
+                          )
+
+
+#Limit Dataset to Past 6 Months
+cases_onset_filter_dates <- filter(cases_onset_agg_week, Date >= max(Date)-182)
+
+
+#Create Preliminary Data Category
+cases_onset_add_preliminary <- mutate(cases_onset_filter_dates, Preliminary_Data = Cases_Date_Onset)
+
+
+#Set Preliminary Data to NA Before Last Two Weeks and Cases Onset Data After Last Two Weeks
+cases_onset_set_na <- data.frame(cases_onset_add_preliminary)
+cases_onset_set_na$Preliminary_Data[0:(nrow(cases_onset_set_na) - 2)] <- NA
+cases_onset_set_na$Cases_Date_Onset[nrow(cases_onset_set_na):(nrow(cases_onset_set_na) - 1)] <- NA
+
+
+
+nrow(cases_onset_set_na)
+#Set Final Dataframe
+cases_onset_by_week <- data.frame(cases_onset_set_na)
+
+
+
+
+#Generate Public Data File and Save to Folder
+cases_csv_cases_onset <- cases_onset_by_week %>%
+  select(Date, Cases_Date_Onset) %>%
+  filter(Cases_Date_Onset > -1) %>%
+  mutate(Cases = Cases_Date_Onset) %>%
+  mutate(Type = "Cases by Onset Date") %>%
+  select(Date, Type, Cases)
+
+
+  
+cases_csv_prelim <- cases_onset_by_week %>%
+  select(Date, Preliminary_Data) %>%
+  filter(Preliminary_Data > -1) %>%
+  mutate(Cases = Preliminary_Data) %>%
+  mutate(Type = "Preliminary Data") %>%
+  select(Date, Type, Cases)
+
+
+
+cases_csv_dataframe <- rbind(cases_csv_cases_onset, cases_csv_prelim)
+
+
+
+#Save CSV to Public Data Folder
+write.csv(cases_csv_dataframe,
+          paste0(base_public_data_filepath, 
+                 "Cases_by_Onset_Date/cases_by_onset_date_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+#Set Public Data Access Url Access String with File Date
+cases_onset_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Cases_by_Onset_Date/cases_by_onset_date_", newFileDate, ".csv")
+
+```
+
+
+
+
+```{r Process Data for Case Rates by BCA Table , include = FALSE}
+
+#PULL DATA FROM AGOL AND PROCESS DATA
+
+#Bring in Cases Data from COVID-19 Cases Folder
+covid_cases_filepath = paste0(base_cases_filepath, 
+                              "covid_19_cases_", 
+                              newFileDate,
+                              ".csv")
+
+covid_cases = read.csv(covid_cases_filepath)
+
+
+#Fix Prince of Whales Name
+if ("Prince Of Wales-Hyder Census Area" %in% covid_cases$Borough){
+  covid_cases["Borough"][covid_cases["Borough"] == "Prince Of Wales-Hyder Census Area"] <- "Prince of Wales-Hyder Census Area"
+}
+
+
+#Keep Only Cases by Report Date
+case_rate_report_date <- select(covid_cases,
+                        Date,
+                        Resident..Y.N.,
+                        Occurrence..Y.N.,
+                        Borough,
+                        Cases..Date.Reported.)
+
+
+#Filter for Residents Only
+case_rate_residents <- filter(case_rate_report_date,
+                    Resident..Y.N. == "Y")
+
+
+#Group by Date and Borough
+case_rate_date_borough <- data.frame(case_rate_residents)
+case_rate_date_borough$Date <- as.Date(case_rate_date_borough$Date, "%m/%d/%Y")
+
+case_rate_date_borough <- case_rate_date_borough %>%
+  group_by(Date, Borough) %>%
+  summarize(Cases = sum(Cases..Date.Reported.)) %>%
+  arrange(Borough)
+
+
+#Create Alaska Variable and 
+case_rate_alaska_add <- case_rate_date_borough %>%
+  group_by(Date) %>%
+  summarize(Cases = sum(Cases)) %>%
+  mutate(Borough = 'Alaska') %>%
+  select(Date, Borough, Cases)
+
+
+#Combine Alaska and Boroughs Dataframes
+case_rate_ak_bor_combined <- rbind(case_rate_alaska_add, case_rate_date_borough)
+
+
+#Create Dates Dataframe
+case_rate_dates_pull <- data.frame(case_rate_ak_bor_combined)
+case_rate_date_min <- min(case_rate_dates_pull$Date)
+case_rate_date_max <- max(case_rate_dates_pull$Date)
+case_rate_date_list = seq(from = case_rate_date_min, to = case_rate_date_max, by = "day")
+case_rate_date_dataframe = data.frame(Date = case_rate_date_list)
+
+
+#Create Borough List from Cases Dataframe
+case_rate_borough_list <- case_rate_ak_bor_combined$Borough
+case_rate_borough_list <- case_rate_borough_list[!duplicated(case_rate_borough_list)]
+case_rate_borough_list <- case_rate_borough_list[case_rate_borough_list != "Unknown"]
+
+
+#Run Loop and Create Date Dataframe for each Borough and Combine to Overall Dataset
+case_rate_dates_bor_dataframe <- data.frame()
+
+for (borough in case_rate_borough_list){
+  case_rate_dates_merged_bor <- data.frame(case_rate_date_dataframe)
+  case_rate_dates_merged_bor["Borough"] = borough
+  
+  case_rate_dates_bor_dataframe <- rbind(case_rate_dates_bor_dataframe, case_rate_dates_merged_bor)
+}
+
+
+#Merge Existing Cases Data to Dates Dataframe and Set NAs to 0
+case_rate_merged_cases_to_date_bor <- left_join(case_rate_dates_bor_dataframe, case_rate_ak_bor_combined, by = c("Date" = "Date", "Borough" = "Borough"))
+case_rate_merged_cases_to_date_bor[is.na(case_rate_merged_cases_to_date_bor)] <- 0
+
+
+#Bring in Population Data Table from AGOL and Merge to Dataframe
+agol_ak_pop_csv = "https://www.arcgis.com/sharing/rest/content/items/a898e500714c42c58d350707d2535ef4/data"
+ak_pop <- read.csv(agol_ak_pop_csv)
+case_rate_merged_cases_pop <- left_join(case_rate_merged_cases_to_date_bor, ak_pop, by = c("Borough" = "Area"))
+
+
+#Create Cases Over the Last 7 Days and 7 Day Case Rates for Each Borough and Combine back to Dataframe
+case_rate_create_cases_last_7_and_rate <- data.frame()
+
+case_rate_cases_7_days_pull <- data.frame(case_rate_merged_cases_pop)
+for (borough in case_rate_borough_list){
+  case_rate_borough_pull <- case_rate_cases_7_days_pull[case_rate_cases_7_days_pull$Borough == borough,]
+  case_rate_borough_pull <- case_rate_borough_pull %>%
+    mutate(Cases_Last_7_Days = roll_sum(Cases, 7, align = "right", fill = NA)) %>%
+    mutate(Rate_Last_7_Days = (Cases_Last_7_Days / Borough.Population) * 100000) %>%
+    select(-c(Borough.Population))
+  
+  case_rate_create_cases_last_7_and_rate <- rbind(case_rate_create_cases_last_7_and_rate, case_rate_borough_pull)
+}
+
+
+#Select Data Up to Most Recent Saturday
+case_rate_add_weekdays <- mutate(case_rate_create_cases_last_7_and_rate, Weekday = weekdays(Date))
+case_rate_find_most_recent_sat <- case_rate_add_weekdays %>%
+  filter(Weekday == "Saturday")
+case_rate_most_recent_saturday <- max(case_rate_find_most_recent_sat$Date)
+
+case_rate_fitler_back_to_most_recent_sat <- case_rate_create_cases_last_7_and_rate %>%
+  filter(Date <= case_rate_most_recent_saturday)
+
+#Remove Unknown
+case_rate_remove_unk <- case_rate_fitler_back_to_most_recent_sat %>%
+  filter(Borough != "Unknown")
+
+#Set Final Data Table
+case_rate_processed_cases_data <- data.frame(case_rate_remove_unk)
+
+
+
+
+
+
+
+#CREATE CASES OVER TIME DATA TABLE
+
+#Pull in Processed Cases Data
+case_rate_cases_data_pull <- data.frame(case_rate_processed_cases_data)
+
+
+#Keep Only Cases
+case_rate_keep_cases <- select(case_rate_cases_data_pull, Date, Borough, Cases)
+
+
+#Group by Borough and Summarize by Cases to find Total Count
+case_rate_case_counts <- case_rate_keep_cases %>%
+  group_by(Borough) %>%
+  summarize(Cases = sum(Cases))
+  
+
+#Join Most Recent 7 Day Case Count and Rate from Processed Cases Table
+case_rate_most_recent_cases_and_rate <- case_rate_cases_data_pull %>%
+  filter(Date == max(case_rate_cases_data_pull$Date)) %>%
+  select(-c(Cases))
+
+case_rate_cases_merged_last_7_and_rate <- left_join(case_rate_case_counts, case_rate_most_recent_cases_and_rate, by = c("Borough" = "Borough"))
+
+
+#Add Community Rate Level Tag
+case_rate_cases_add_comm_rate_tag <- data.frame(case_rate_cases_merged_last_7_and_rate)
+
+case_rate_cases_add_comm_rate_tag$Community_Rate_Tag <- ifelse(case_rate_cases_add_comm_rate_tag$Rate_Last_7_Days >= 400, '>400',
+                                              ifelse(case_rate_cases_add_comm_rate_tag$Rate_Last_7_Days < 400 & case_rate_cases_add_comm_rate_tag$Rate_Last_7_Days >= 200, "200-399",
+                                              ifelse(case_rate_cases_add_comm_rate_tag$Rate_Last_7_Days < 200 & case_rate_cases_add_comm_rate_tag$Rate_Last_7_Days >= 100, "100-199",
+                                              ifelse(case_rate_cases_add_comm_rate_tag$Rate_Last_7_Days < 100 & case_rate_cases_add_comm_rate_tag$Rate_Last_7_Days >= 50, "50-99",
+                                              ifelse(case_rate_cases_add_comm_rate_tag$Rate_Last_7_Days < 50 & case_rate_cases_add_comm_rate_tag$Rate_Last_7_Days >= 0, "0-49", 
+                                              "None")))))
+
+
+#Limit Decimals to 2 in Rates
+case_rate_round_rates_decimals <- data.frame(case_rate_cases_add_comm_rate_tag)
+case_rate_round_rates_decimals$Rate_Last_7_Days <- round(case_rate_round_rates_decimals$Rate_Last_7_Days, 2)
+
+
+#Convert Rates to Strings
+case_rate_convert_rates_to_strings <- data.frame(case_rate_round_rates_decimals)
+case_rate_convert_rates_to_strings$Rate_Last_7_Days <- as.character(case_rate_convert_rates_to_strings$Rate_Last_7_Days)
+
+
+#If Cases Less than 6, Hide Case Rate
+case_rate_hide_case_rates <- data.frame(case_rate_convert_rates_to_strings)
+case_rate_hide_case_rates$Rate_Last_7_Days <- ifelse(case_rate_hide_case_rates$Cases_Last_7_Days < 6, "**", case_rate_hide_case_rates$Rate_Last_7_Days)
+
+  
+#Add Commas to Case Counts and Rates
+case_rate_add_thousand_commas <- data.frame(case_rate_hide_case_rates)
+case_rate_add_thousand_commas$Cases_Last_7_Days <- prettyNum(case_rate_add_thousand_commas$Cases_Last_7_Days, big.mark=",")
+case_rate_add_thousand_commas$Rate_Last_7_Days <- prettyNum(case_rate_add_thousand_commas$Rate_Last_7_Days, big.mark=",")
+
+
+#Set Final Data Table
+case_rate_cases_summary <- data.frame(case_rate_add_thousand_commas)
+
+
+#Pull in Processed Cases Data
+case_rate_cases_data_pull <- data.frame(case_rate_processed_cases_data)
+
+
+#Keep Only Case Rates and Cases Last 7
+case_rate_keep_case_rates <- select(case_rate_cases_data_pull, Date, Borough, Rate_Last_7_Days, Cases_Last_7_Days)
+
+
+#Create Weekdays 
+case_rate_rates_create_weekdays <- data.frame(case_rate_keep_case_rates)
+case_rate_rates_create_weekdays$Weekday <- weekdays(case_rate_rates_create_weekdays$Date)
+
+
+#Select Only Saturdays from DataFrame
+case_rate_rates_keep_sat <- filter(case_rate_rates_create_weekdays, case_rate_rates_create_weekdays$Weekday == "Saturday")
+case_rate_rates_keep_sat <- select(case_rate_rates_keep_sat, -c(Weekday))
+
+
+#Keep Only Last 6 Entries for Each Borough
+case_rate_last_6_entries_case_rates <- data.frame()
+
+for (borough in case_rate_borough_list){
+  case_rate_rates_borough_pull <- filter(case_rate_rates_keep_sat, Borough == borough)
+  case_rate_keep_last_6 <- tail(case_rate_rates_borough_pull, n = 6)
+  
+  case_rate_last_6_entries_case_rates <- rbind(case_rate_last_6_entries_case_rates, case_rate_keep_last_6)
+}
+
+
+#Add Community Rate Level Tag
+case_rate_rates_add_comm_rate_tag <- data.frame(case_rate_last_6_entries_case_rates)
+
+case_rate_rates_add_comm_rate_tag$Community_Rate_Tag <- ifelse(case_rate_rates_add_comm_rate_tag$Rate_Last_7_Days >= 400, 'level_5',
+                                              ifelse(case_rate_rates_add_comm_rate_tag$Rate_Last_7_Days < 400 & case_rate_rates_add_comm_rate_tag$Rate_Last_7_Days >= 200, "level_4",
+                                              ifelse(case_rate_rates_add_comm_rate_tag$Rate_Last_7_Days < 200 & case_rate_rates_add_comm_rate_tag$Rate_Last_7_Days >= 100, "level_3",
+                                              ifelse(case_rate_rates_add_comm_rate_tag$Rate_Last_7_Days < 100 & case_rate_rates_add_comm_rate_tag$Rate_Last_7_Days >= 50, "level_2",
+                                              ifelse(case_rate_rates_add_comm_rate_tag$Rate_Last_7_Days < 50 & case_rate_rates_add_comm_rate_tag$Rate_Last_7_Days >= 0, "level_1", 
+                                              "None")))))
+
+
+#Set Final Data Table
+case_rate_case_rates_over_6_weeks <- data.frame(case_rate_rates_add_comm_rate_tag)
+
+
+
+
+
+
+
+
+#SET TIMESTAMPS FOR HEADER TITLES
+
+#Pull Date Frame from Case Rates Overt Time Dataframe
+case_rate_cases_time_pull <- select(case_rate_case_rates_over_6_weeks, Date, Borough) %>%
+  filter(Borough == "Alaska") %>%
+  select(Date)
+
+
+#Set Extra Day on Start Dates to Match Sunday
+case_rate_cases_start <- case_rate_cases_time_pull[5,1] + 1
+
+case_rate_rate_start <- case_rate_cases_time_pull[1,1] + 1
+
+
+#Pull the Timeframe for the Cases Over Last 7 Days
+case_rate_cases_timeframe <- paste0(format(as.Date(case_rate_cases_start, format = "%Y%m%d"), "%b %d"), 
+                          " - ", 
+                          format(as.Date(case_rate_cases_time_pull[6,1], format = "%Y%m%d"), "%b %d"))
+
+
+#Pull the Timeframe for the Case Rates Bar Graph
+case_rate_rates_timeframe <- paste0(format(as.Date(case_rate_rate_start, format = "%Y%m%d"), "%b %d"), 
+                          " - ", 
+                          format(as.Date(case_rate_cases_time_pull[6,1], format = "%Y%m%d"), "%b %d"))
+
+
+
+
+
+
+
+
+#CREATE BAR CHART IMAGES FOR TABLE
+
+#Set an Empty List to Store Bar Graph File Locations
+case_rate_temp_file_dict <- dict(init_keys = NULL, init_values = NULL)
+
+
+#Set Dataframe for the Bar Charts
+case_rate_bar_charts <- data.frame(case_rate_case_rates_over_6_weeks)
+
+
+#Set Color Keys for Levels
+level_5 = "#a8171c"
+level_4 = "#df342d"
+level_3 = "#fb6f50"
+level_2 = "#fcb194"
+level_1 = "#fee6da"
+
+
+#Set Color Palette For Community Rates Bar Charts
+color_palette <- c(
+  "level_1" = level_1,
+  "level_2" = level_2,
+  "level_3" = level_3,
+  "level_4" = level_4,
+  "level_5" = level_5
+)
+
+
+#Generate Bar Graphs for Each Borough and Save to TempDir for Later Use
+for (borough in case_rate_borough_list){
+  
+  #Pull Data by Borough
+  case_rate_bar_graphs_bor_pull <- case_rate_bar_charts[case_rate_bar_charts$Borough == borough,]
+  
+  
+  par(mar=c(1, 1, 1, 1))
+  
+  
+  #Generate Bar Graph
+  rate_plot <- ggplot(case_rate_bar_graphs_bor_pull) +
+    geom_bar(aes(x=Date, y = Cases_Last_7_Days, fill = Community_Rate_Tag), width = 5, show.legend = FALSE, stat = 'identity') +
+    scale_fill_manual(values = color_palette) + 
+    theme(
+      panel.background = element_rect(fill='transparent'),
+      plot.background = element_rect(fill='transparent', color=NA),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.title=element_blank(),
+      axis.text=element_blank(),
+      axis.ticks=element_blank(),
+      legend.background = element_rect(fill='transparent'),
+      legend.box.background = element_rect(fill='transparent'),
+      plot.margin = unit(c(-15, -5, -20, -5), "pt")
+    )
+  
+  
+  #Set File Path to Temporary Folder
+  case_rate_temp_filepath <- file.path(tempdir(), paste0(borough, " Bar Chart.png"))
+  
+  
+  #Add Temp Filepath to Dictionary
+  case_rate_temp_file_dict[borough] <- case_rate_temp_filepath
+  
+  
+  #Export Bar Graph and Save to Temp File Location
+   ggsave(path = file.path(tempdir()),
+          filename = paste0(borough, " Bar Chart.png"),
+          dpi= 500)
+}
+
+
+
+
+#Export Original Cases Data to Publica Data
+write.csv(covid_cases,
+          paste0(base_public_data_filepath,
+                 "Case_Rates_by_BCA/case_rates_by_bca_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+
+#Set URL Access Web Address
+cases_rates_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Case_Rates_by_BCA/case_rates_by_bca_", newFileDate, ".csv")
+```
+
+
+
+
+```{r, Process Data for Hospital Capacity Graph, include = FALSE}
+
+#Pull Hospital Data from Hospital Beds Occupied Folder
+hosp_bed_filepath = paste0(base_hosp_filepath, 
+                              "hospital_beds_occupied_", 
+                              newFileDate,
+                              ".csv")
+
+hosp_bed = read.csv(hosp_bed_filepath)
+
+
+
+#Filter by GCAF
+hosp_bed_filter_gcaf <- filter(hosp_bed,
+                               Facility.Filter == 1)
+
+
+
+#Select Region and Counts Columns
+hosp_bed_select_cols <- select(hosp_bed_filter_gcaf,
+                               Survey.Date, Hospital.Region, Pos.COVID..Imputed.)
+
+
+
+#Create List of Regions in Data Table
+hosp_bed_region_list <- select(hosp_bed_select_cols, Hospital.Region)
+hosp_bed_region_list <- unique(hosp_bed_region_list)
+hosp_bed_region_list <- as.list(hosp_bed_region_list$Hospital.Region)
+
+
+#Create Empty Data Frame with Dates for Merge
+hosp_bed_merged_datasets <- data.frame(hosp_bed_select_cols) %>%
+  select(-c(Hospital.Region, Pos.COVID..Imputed.)) %>%
+  unique()
+
+hosp_bed_merged_datasets$Survey.Date <- as.Date(hosp_bed_merged_datasets$Survey.Date, "%m/%d/%Y")
+hosp_bed_merged_datasets$Survey.Date <- as.character(hosp_bed_merged_datasets$Survey.Date)
+
+
+
+#Merge Region Data into Main Dataframe
+for (region in hosp_bed_region_list){
+  
+  #Select Out 1 Region at a Time
+  hosp_bed_region_grab <- filter(hosp_bed_select_cols, Hospital.Region == region)
+  
+  #Convert Survey Date Field to Date Type
+  hosp_bed_region_grab$Survey.Date <- as.Date( hosp_bed_region_grab$Survey.Date, "%m/%d/%Y")
+  
+  #Group by Day
+  hosp_bed_region_grab <- hosp_bed_region_grab %>%
+    group_by(Survey.Date, Hospital.Region) %>%
+    summarize(Pos.COVID..Imputed. = sum(Pos.COVID..Imputed.))
+  
+  #Create Region Column
+  hosp_bed_region_grab[[region]] = hosp_bed_region_grab$Pos.COVID..Imputed.
+  
+  #Drop Pos COVID Count and Region Name
+  hosp_bed_region_grab <- select(hosp_bed_region_grab, Survey.Date, all_of(region))
+  
+  #Convert Dates to Characters
+  hosp_bed_region_grab$Survey.Date <- as.character(hosp_bed_region_grab$Survey.Date)
+  
+  #Merge Region Grab to Merged Dataset
+  hosp_bed_merged_datasets <- merge(hosp_bed_merged_datasets, hosp_bed_region_grab, by = c("Survey.Date"))
+  
+}
+
+hosp_bed_merged_datasets$Survey.Date <- as.Date(hosp_bed_merged_datasets$Survey.Date, "%Y-%m-%d")
+
+
+
+#Convert Dates to Weekdays
+hosp_bed_add_weekdays <- mutate(hosp_bed_merged_datasets, Weekday = weekdays(Survey.Date))
+
+
+#Keep Only Saturdays
+hosp_bed_keep_sat <- filter(hosp_bed_add_weekdays, Weekday == "Saturday")
+
+
+#Drop Weekdays Column
+hosp_bed_drop_weekday <- select(hosp_bed_keep_sat, -c(Weekday))
+
+
+#Create Total Column
+hosp_bed_add_total <- data.frame(hosp_bed_drop_weekday) %>%
+  mutate(Total = (Anchorage + Gulf.Coast + Interior + Matanuska.Susitna + Northern + Southeast + Southwest))
+
+
+#Set Final DataFrame
+hosp_bed_occupied <- data.frame(hosp_bed_add_total)
+
+
+
+
+#Generate CSV for Public Data
+write.csv(hosp_bed_occupied,
+          paste0(base_public_data_filepath,
+                 "Hospital_Beds_Occupied/hospital_beds_occupied_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+#Set URL Access Web Address
+hosp_beds_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Hospital_Beds_Occupied/hospital_beds_occupied_", newFileDate, ".csv")
+```
+
+
+
+
+```{r, Proccess Data for Vaccinated Vs Unvcaccinated Hospitalization Rate, include = FALSE}
+
+#Pull Data from Vaccinated vs Unvaccinated Folder
+vac_unvac_hosp_filepath = paste0(base_vac_unvac_filepath, 
+                              "Vac vs Unvac Hospitalization Rate/four_week_hosp_IRs_table_", 
+                              newFileDate,
+                              ".csv")
+
+vac_unvac_hosp = read.csv(vac_unvac_hosp_filepath)
+
+
+#Edit Dataframe and Restructure for Graph
+vac_unvac_hosp_data <- vac_unvac_hosp %>%
+  mutate(Date = paste0(format(as.Date(start_date, "%Y-%m-%d"), "%b %d"), " - ", format(as.Date(end_date, "%Y-%m-%d"), "%b %d"))) %>%
+  mutate(Up.to.Date = up_to_date.adj.hosp.rate.100K) %>%
+  mutate(Full.Vax = full_vax_not_utd.adj.hosp.rate.100K) %>%
+  mutate(Unvax = unvax.adj.hosp.rate.100K) %>%
+  
+  select(Date,
+         Up.to.Date,
+         Full.Vax,
+         Unvax)
+
+
+vac_unvac_hosp_data <- data.frame(vac_unvac_hosp_data, stringsAsFactors = FALSE )
+
+
+#Generate CSV for Public Data
+write.csv(vac_unvac_hosp_data,
+          paste0(base_public_data_filepath,
+                 "Hospital_Rates_by_Vaccination_Status/hospital_rates_by_vaccination_status_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+#Set URL Access Web Address
+vac_unvac_hosp_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Hospital_Rates_by_Vaccination_Status/hospital_rates_by_vaccination_status_", newFileDate, ".csv")
+```
+
+
+
+
+```{r, Proccess Data for Vaccinated Vs Unvcaccinated Case Rates, include = FALSE}
+
+#Pull Data from Vaccinated vs Unvaccinated Folder
+vac_unvac_case_filepath = paste0(base_vac_unvac_filepath, 
+                              "Vac vs Unvac Case Rate/weekly_case_IRs_table_", 
+                              newFileDate,
+                              ".csv")
+
+vac_unvac_case = read.csv(vac_unvac_case_filepath)
+
+
+#Edit Dataframe and Restructure for Graph
+vac_unvac_case_data <- vac_unvac_case %>%
+  mutate(Date = as.Date(start_date, "%Y-%m-%d")) %>%
+  mutate(Up.to.Date = up_to_date.adj.case.rate.100K) %>%
+  mutate(Full.Vax = full_vax_not_utd.adj.case.rate.100K) %>%
+  mutate(Unvax = unvax.adj.case.rate.100K) %>%
+  mutate(Start.End.Tag = paste0(format(as.Date(start_date, "%Y-%m-%d"), "%b %d"), " - ", format(as.Date(end_date, "%Y-%m-%d"), "%b %d"))) %>%
+  
+  select(Date,
+         Up.to.Date,
+         Full.Vax,
+         Unvax,
+         Start.End.Tag)
+
+
+#Generate CSV for Public Data
+write.csv(vac_unvac_case_data,
+          paste0(base_public_data_filepath,
+                 "Case_Rates_by_Vaccination_Status/case_rates_by_vaccination_status_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+#Set URL Access Web Address
+vac_unvac_case_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Case_Rates_by_Vaccination_Status/case_rates_by_vaccination_status_", newFileDate, ".csv")
+```
+
+
+
+
+
+```{r, Process Flu Cases by Week, include = FALSE}
+
+#Pull Data from Flu Cases by Week Folder
+flu_season_filepath = paste0(base_flu_filepath, 
+                              "flu_data_", 
+                              newFileDate,
+                              ".csv")
+
+flu_season = read.csv(flu_season_filepath)
+
+
+
+
+#Drop MMWR and Convert Dates to Datetime Index
+flu_season_drop_and_convert <- flu_season %>%
+  select(-c(MMWR..)) %>%
+  mutate(Date = as.Date(Date, "%m/%d/%Y"))
+
+
+
+
+#Rename Column Headers
+flu_season_rename_headers <- flu_season_drop_and_convert %>%
+  rename(Season_Current = Current.Season,
+         Season_20_21 = X20.21.Season,
+         Season_19_20 = X19.20.Season,
+         Season_18_19 = X18.19.Season,
+         Season_17_18 = X17.18.Season)
+
+
+
+#Set Final Dataset 
+flu_season_cases <- data.frame(flu_season_rename_headers)
+
+
+#Generate CSV for Public Data
+write.csv(flu_season_cases,
+          paste0(base_public_data_filepath,
+                 "Influenza_by_Season/influenza_by_season_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+#Create URL for Public Access
+flu_season_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Influenza_by_Season/influenza_by_season_", newFileDate, ".csv")
+```
+
+
+
+
+
+
+```{r, Emergency Department Visits Comparison, include = FALSE}
+
+#Pull Data from Emergency Department Visits Folder
+emerg_depart_filepath = paste0(base_emergency_filepath, 
+                              "cli_and_ili_", 
+                              newFileDate,
+                              ".csv")
+
+emerg_depart = read.csv(emerg_depart_filepath)
+
+
+
+#Convert Dates to Datetime
+emerg_depart_convert_dates <- emerg_depart %>%
+  mutate(Date = as.Date(Date, "%d%b%y"))
+
+
+
+#Rename Column Headers
+emerg_depart_rename_headers <- emerg_depart_convert_dates %>%
+  rename(ILI = X..ILI,
+         CLI = X..CLI)
+
+
+
+#Set Final Table
+emergency_department_cases <- data.frame(emerg_depart_rename_headers)
+
+
+
+#Generate CSV for Public Data
+write.csv(emergency_department_cases,
+          paste0(base_public_data_filepath,
+                 "Emergency_Department_Visists/emergency_department_visits_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+#Create URL for Public Access
+emergency_department_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Emergency_Department_Visists/emergency_department_visits_", newFileDate, ".csv")
+```
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- UPDATE TEXT SECTIONS HERE -->
+
+
+### Key Findings 
+
+* The incidence of COVID-19 remained as high or higher than it was before the Omicron wave across most parts of Alaska during the week of March 20–March 26, 2022, with mixed   trajectories across boroughs and census areas. Case counts are no longer decreasing.
+
+* Appreciable levels of influenza transmission began occurring in mid-December but slowly declined over the last several weeks.
+
+* Other respiratory viruses are circulating in addition to SARS-CoV-2 and influenza virus.
+
+* Beginning April 6, 2022, DHSS will be updating data on the Alaska COVID-19 Information Hub once a week, on Wednesdays, rather than the current three times weekly. 
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+
+
+
+## COVID-19 
+
+### COVID-19 Case Trends {.unlisted .unnumbered}
+
+* COVID-19 transmission continues to occur widely throughout much of Alaska, with some evidence for an upwards trajectory. Cases and hospitalizations remain far below the peak of the Omicron wave.
+
+* 2,461 cases were reported in Alaskans the week of March 6–March 12, however this includes a large number of older cases with delayed reporting, and the week-over-week increase in reported cases is not indicative of the true trend. The number of new cases statewide last week was similar to the number the week before.
+
+* The number of reported COVID-19 cases last week was lower in all five of the largest boroughs (Municipality of Anchorage, Matanuska-Susitna Borough, Fairbanks North Star Borough, Kenai Peninsula Borough, and the City and Borough of Juneau) compared to the previous week, though the declines were generally more modest than those observed in previous weeks.
+
+* The intensity of COVID-19 transmission varies between communities outside the largest boroughs. Trajectories are mixed, with COVID-19 cases declining in many boroughs and census areas but increasing in others. Regardless, absolute levels of transmission remain high in many areas.
+
+* The Omicron variant accounts for effectively all SARS-CoV-2 circulating in Alaska. An increasing proportion of COVID-19 cases in Alaska are caused by the BA.2 lineage (a sub-type of Omicron). Visit Alaska’s SARS-CoV-2 <a href="https://akvariants.github.io/" target="_blank">Genomics Dashboard</a> to learn more.
+
+* To learn more about COVID-19 cases, hospitalizations, and deaths due to COVID-19 in Alaska, visit the <a href="https://experience.arcgis.com/experience/af2efc8bffbf4cdc83c2d1a134354074/?form=MY01SV&OCID=MY01SV" target="_blank">Cases Dashboard</a> or the <a href="https://dhss.alaska.gov/dph/Epi/id/siteassets/pages/HumanCoV/COVID_monthly_update.pdf" target="_blank">monthly report</a>. The cases dashboard includes demographic information on cases and the monthly report includes demographic information on hospitalizations and deaths.
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+<!-- TITLE AND SUBTITLE  FOR WEEKLY CASES GRAPH -->
+<p style="font-family: Open Sans; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+Weekly COVID-19 Cases Among Alaskan Residents by Onset Date</b></p>
+
+```{r, Onset Cases by Week Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+
+cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
+  
+  #Cases by Onset Date
+  add_trace(
+    type = "bar",
+    name = "Cases by Onset Date",
+    x = ~Date,
+    y = ~Cases_Date_Onset,
+    marker = list(
+      color = "rgb(212, 70, 47)"
+    ),
+    hoverinfo = "y"
+                           
+  ) %>%
+
+
+  #Preliminary Data
+  add_trace(
+    type = 'bar',
+    name = "Preliminary Data",
+    x = ~Date,
+    y = ~Preliminary_Data,
+    marker = list(
+      color = "rgb(179, 179, 179)"
+    ),
+     hoverinfo = "y"
+  ) %>%
+  
+  
+  
+  #Figure Output Options
+  layout(
+    
+    title = list(
+      text = "",
+      xanchor = "center",
+      x = .400,
+      yanchor = "middle",
+      textposition = "right",
+      font = list(
+        family = "Open Sans",
+        size = 20)
+      ),
+    
+    xaxis = list(
+      title = "",
+      text = "%{y:,}"
+    ),
+    
+    yaxis = list(
+      title = "",
+      tickformat = ",",
+      automargin=T
+    ),
+        
+      
+    legend = list(x = .72, y = .95)
+  )
+
+cases_onset_graph
+```
+##### Get the Data <a href="`r cases_onset_url`" target="_blank">Here</a>
+
+<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+Cases are attributed to symptom onset date, if recorded. Otherwise, cases are attributed to specimen collection date, report date or hospitalization date, whichever comes first.</p>
+
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+
+<center>
+``` {r Case Rates by BCA Table, include = TRUE, echo = FALSE, fig.align = 'center' }
+
+#Set Table Feature Options
+options(reactable.theme = reactableTheme(
+  backgroundColor = '#fffff',
+  borderColor = "hsl(233, 9%, 22%)",
+  stripedColor = '#e6e6e6',
+))
+
+
+
+#Set Cases Summary and Add Columsn for Reactable Table
+cases_reactable_table <- data.frame(case_rate_cases_summary) %>%
+  mutate(Case_Trend = NA) %>%
+  select(-c(Date, Cases)) %>%
+  select(Borough, Community_Rate_Tag, Rate_Last_7_Days, Cases_Last_7_Days, , Case_Trend)
+
+
+
+
+#Create Tag Dictionary for Color Coding Case Rate Tags
+rate_tag_dict <- dict(init_keys = NULL, init_values = NULL)
+rate_tag_dict[">400"] <- 'level_5'
+rate_tag_dict["200-399"] <- 'level_4'
+rate_tag_dict["100-199"] <- 'level_3'
+rate_tag_dict["50-99"] <- 'level_2'
+rate_tag_dict["0-49"] <- 'level_1'
+
+
+
+
+#Generate Final Table with Reactable
+reactable(cases_reactable_table,
+          defaultPageSize = 50,
+          fullWidth = FALSE,
+          striped = TRUE,
+          borderless = FALSE,
+          columns = list(
+            Borough = colDef(name = "Borough/Census Area", 
+                          minWidth = 260,
+                          cell = function(value) {
+                             class <- 'area_varela'
+                             div(class = class, value)
+                          }),
+            
+            Community_Rate_Tag = colDef(name = 'Community Case Rate',
+                           align = 'center',
+                           show = FALSE,
+                           minWidth = 100,
+                           cell = function(value) {
+                             class <- paste0("tag rate_", rate_tag_dict[value])
+                             div(class = class, value)
+                           }),
+            
+            Cases_Last_7_Days = colDef(#name = "Case Count",
+                                  html = TRUE,
+                                  header = function(value) {
+                                    value = paste0("Case Count ", case_rate_cases_timeframe)
+                                    div(value)
+                                  },
+                                  minWidth = 130,
+                                  align = 'center',
+                                  cell = function(value){
+                                   div(class = 'number_varela', value)
+                                 }
+                                  ),
+            
+            Rate_Last_7_Days = colDef(name = "Case Rate Per 100K", 
+                                 minWidth = 120,
+                                 align = 'center',
+                                 format = colFormat(separators = TRUE),
+                                 cell = function(value, index){
+                                   level <- cases_reactable_table$Community_Rate_Tag[index]
+                                   class <- paste0("tag rate_", rate_tag_dict[level])
+                                   div(class = class, value)
+                                 }
+                                 ),
+            
+            
+            Case_Trend = colDef(#name = "Cases Trend (Last 6 Weeks)",
+                                header = function(value) {
+                                    value = paste0("Weekly Case Counts ", case_rate_rates_timeframe)
+                                    div(value)
+                                  },
+                               align = 'center',
+                               html = TRUE,
+                               minWidth = 180,
+                               cell = function(values, index) {
+                                 chart_path = case_rate_temp_file_dict[cases_reactable_table$Borough[index]]
+                                 img_src <- knitr::image_uri(chart_path)
+                                 image <- img(src = img_src, alt = '', width = 140, height = 25)
+                                 tagList(
+                                 div(style = list(display = 'flex'), image))
+            })
+          ))
+
+
+```
+<center>
+##### Get the Data <a href="`r cases_rates_url`" target="_blank">Here</a>
+
+<p style="font-family: Open Sans; font-size: 12px; color: #000000; text-align: left; line-height: 1.4em;">
+*Rates based on <20 observations are statistically unreliable and should be used with caution.</p>
+
+<p style="font-family: Open Sans; font-size: 12px; color: #000000; text-align: left; line-height: 1.4em;">
+**Rates based on <6 observations are not reported.</p>
+
+<p style="font-family: Open Sans; font-size: 12px; color: #000000; text-align: left; line-height: 1.4em;">
+Alert levels are based on case report date. The case rates in the Kusilvak and Bethel Census Areas are artificially elevated this past week due to processing of delayed reports.</p>
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+
+
+### COVID-19 and Hospital Capacity {.unlisted .unnumbered}
+
+* Hospital capacity remains limited. Large numbers of patients overall (not necessarily with COVID-19 or other respiratory viruses) relative to the number of available staff continue to create capacity challenges across the state, with some areas more affected than others.
+
+* Patient Care Strategies for Scare Resource Situations are currently not being utilized by any facility in Alaska. However, given the continued limited capacity of some facilities, the Crisis Care Committee continues to meet to monitor the situation and remains available to assist facilities and DHSS should the need arise.
+
+* As of March 14, 2022, there were 38 persons with COVID-19 in Alaska hospitals, accounting for 3.1% of all hospitalized persons. Visit the <a href="https://experience.arcgis.com/experience/f21f964c046c400baad4ad78e06ceb25/" target="_blank">Hospital Dashboard</a> for more data.
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+<!-- TITLE AND SUBTITLE  FOR HOSPITAL CAPACITY GRAPH -->
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+Hospital Beds Occupied by Persons with COVID-19 by Region</b></p>
+
+```{r, Hospital Capacity Over Time Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+
+#Set Max Variable for Highlights
+max_search <- select(hosp_bed_occupied, -c(Survey.Date))
+max <- 0
+
+for (region in colnames(max_search)){
+  region_select <- select(max_search, region)
+  max_region <- max(region_select)
+  if (max_region >= max){
+    max <- max_region
+  }
+}
+
+max <- max + 10
+
+
+
+#Find Most Current Date for Omicron Highlight
+#IF OMICRON HAS FINAL DATE, DELETE SECTION AND ADD FINAL DATE TO HIGHLIGHT SECTION IN LAYOUT
+max_date_search <- select(hosp_bed_occupied, Survey.Date)
+max_date_search$Survey.Date <- as.Date(max_date_search$Survey.Date, "%Y-%m-%d")
+max_date <- max(max_date_search$Survey.Date)
+max_date <- format(max_date, "%Y-%m-%d")
+
+
+#Generate Graph
+hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
+  
+  #ADD SOUTHWEST
+  add_trace(
+    name = "Southwest",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Southwest,
+    marker=list(
+      color='#460202')
+  ) %>%
+  
+  #ADD SOUTHEAST BARS
+  add_trace(
+    name = "Southeast",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Southeast,
+    marker=list(
+      color='#690202')
+  ) %>%
+  
+  #ADD NORTHERN BARS
+  add_trace(
+    name = "Northern",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Northern,
+    marker=list(
+      color='#8c0303')
+  ) %>%
+  
+  #ADD MATANUSKA SUSITNA BARS
+  add_trace(
+    name = "Matanuska - Susitna",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Matanuska.Susitna,
+    marker=list(
+      color='#a81818')
+  ) %>%
+  
+  #ADD Interior BARS
+  add_trace(
+    name = "Interior",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Interior,
+    marker=list(
+      color='#f24949'
+      )
+  ) %>%
+  
+  #ADD GULF COAST BARS
+  add_trace(
+    name = "Gulf Coast",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Gulf.Coast,
+    marker=list(
+      color='#ed8080'
+      )
+  ) %>%
+  
+  #ADD ANCHORAGE BARS
+  add_trace(
+    name = "Anchorage",
+    type = "bar",
+    x = ~Survey.Date,
+    y = ~Anchorage,
+    marker=list(
+      color='#fab6b6'
+      )
+  ) %>%
+  
+  #ADD TOTALS
+  add_trace(
+    name = "Total",
+    type = "scatter",
+    mode = "line",
+    x = ~Survey.Date,
+    y = ~Total,
+    line=list(
+      color='rgba(0,0,0,0)'
+      ),
+    hovertemplate = "<b>%{y}</b>",
+    showlegend = FALSE
+  ) %>%
+  
+
+  
+  #SET LAYOUT
+  layout(
+    
+    title = list(
+      text = "",
+      xanchor = "center",
+      x = .400,
+      yanchor = "middle",
+      textposition = "right",
+      font = list(
+        family = "Open Sans",
+        size = 20)
+      ),
+    
+    
+    
+    #ADD HIGHLIGHT TAGS
+    annotations = list(
+      
+      #DELTA TAG
+      list(
+        text = "<b>DELTA</b>",
+        font = list(
+          size = 12,
+          color = "#494949"
+        ),
+        xref = "x",
+        x = "2021-07-31",
+        yref = "paper",
+        y = .98,
+        align = "left",
+        showarrow = FALSE),
+      
+      #OMICRON TAG
+      list(
+        text = "<b>OMICRON</b>",
+        font = list(
+          size = 12,
+          color = "#494949"
+        ),
+        xref = "x",
+        x = "2022-02-03",
+        yref = "paper",
+        y = .98,
+        align = "left",
+        showarrow = FALSE)
+      ),
+    
+    
+    
+    #ADD HIGHLIGHTS
+    shapes = list(
+      
+      #DELTA HIGHLIGHT
+      list(type = "rect",
+      fillcolor = "#558baf",
+      line = list(color = "rgba(0,0,0,0)"),
+      opacity = .2,
+      x0 = "2021-07-04",
+      x1 = "2021-12-11",
+      xref = "x",
+      y0 = 0,
+      y1 = max,
+      yref = "y",
+      layer = "below"
+      ),
+      
+      
+      
+      #OMICRON HIGHLIGHT
+      list(type = "rect",
+      fillcolor = "#377f64",
+      line = list(color = "rgba(0,0,0,0)"),
+      opacity = .2,
+      x0 = "2021-12-26",
+      x1 = max_date, #SET FINAL DATE WHEN OFFICIAL END OF OMICRON DETERMINED
+      xref = "x",
+      y0 = 0,
+      y1 = max,
+      yref = "y",
+      layer = "below"
+      )
+      
+    ),
+    
+    
+    #Set X AXIS TITLE
+    xaxis = list(
+      title = "",
+      text = "%{y:,}"
+    ),
+    
+    
+    #SET YAXIS TITLE
+    yaxis = list(
+      title = "",
+      tickformat = ",",
+      automargin=T
+      
+    ),
+        
+    
+    #SET LEGEND LOCATION  
+    legend = list(
+      x = .03, 
+      y = .97),
+   
+    
+    #SET UNIFIED LEGEND HOVER
+    hovermode = "x unified",
+    
+    
+    #STACK BARS
+    barmode = "stack"
+                              
+  )
+
+
+hosp_bed_graph
+```
+##### Get the Data <a href="`r hosp_beds_url`" target="_blank">Here</a>
+
+<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+For clarity of display, the number of hospital beds occupied is shown for each Saturday. For more data on hospital capacity please visit the <a href="https://alaska-dhss.maps.arcgis.com/apps/dashboards/2546d1e6fd7b4070ab299289d6594516" target="_blank">Hospital Dashboard</a> or the <a href="https://covid-19-csv-files-database-alaska-dhss.hub.arcgis.com/" target="_blank">Hospital Data Tables.</a> All data are preliminary and subject to change first.</p>
+
+
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+
+
+
+### COVID-19 and Vaccination {.unlisted .unnumbered}
+* 71.2% of Alaska residents aged ≥5 years have received at least one dose of a COVID-19 vaccine. Among those who completed the primary vaccine series, 50.2% of Alaska residents ≥18 years have received their booster. Learn more about COVID-19 vaccination coverage in Alaska on the <a href="https://experience.arcgis.com/experience/a7e8be4adbe740a1bad1393894ee4075/" target="_blank">Vaccine Dashboard</a>. Learn more about <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/vaccineappointments.aspx" target="_blank">COVID-19 vaccines</a>.
+
+* Vaccines help protect against infection and against severe disease, especially when a person is up to date on vaccinations. During the 4-week period from February 6, 2022–March 5, 2022, unvaccinated Alaskans were 7.3 times more likely to be hospitalized due to COVID-19 than Alaskans who are up to date on COVID-19 vaccination (i.e., completed the primary series and received a booster dose, if eligible) and 2.9 times more likely to be hospitalized due to COVID-19 than Alaskans who completed the primary vaccination series but are not up to date. These estimates are lagged by one week to partially account for the time it takes to document hospitalizations. (See the <a href="https://dhss.alaska.gov/dph/Epi/id/siteassets/pages/HumanCoV/COVID_monthly_update.pdf" target="_blank">monthly report</a> for more data and analysis through January.)
+
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<!-- TITLE AND SUBTITLE  FOR VACCINATED VS UNVACCINATED HOSPITALIZATION RATES -->
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+COVID-19 Hospitalization Rates by Vaccination Status by Week</b></p>
+
+```{r, Vaccination Vs Unvaccinated Hospitalization Rate Line Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+
+#Create list of Date to order graph
+date_list <- list(vac_unvac_hosp_data$Date)
+
+
+#Generate Graph
+vac_unvac_hosp_graph <- plot_ly(vac_unvac_hosp_data, hovertemplate = "%{y:.2f}") %>%
+  
+  #Add Up to Date
+  add_trace(
+    name = "Up to Date",
+    type = "scatter",
+    mode = "lines+markers",
+    x = ~Date,
+    y = ~Up.to.Date,
+    marker = list(
+      color = "#00dca6",
+      size = 5),
+    line = list(
+      width = 5,
+      color = "#00dca6"
+    )
+    ) %>%
+  
+  add_trace(
+    name = "Fully Vaccinated",
+    type = "scatter",
+    mode = "lines+markers",
+    x = ~Date,
+    y = ~Full.Vax,
+    marker = list(
+      color = "#ad95dc",
+      size = 5),
+    line = list(
+      width = 5,
+      color = "#ad95dc")
+    ) %>%
+  
+  add_trace(
+    name = "Unvaccinated",
+    type = "scatter",
+    mode = "lines+markers",
+    x = ~Date,
+    y = ~Unvax,
+    marker = list(
+      color = "#1d81a2",
+      size = 5),
+    line = list(
+      width = 5,
+      color = "#1d81a2")
+    ) %>%
+  
+  #1d81a2
+  layout(
+     legend = list(
+      x = .78, 
+      y = .98),
+     
+     scene = list(
+       xaxis = list(
+         showspikes = TRUE
+       )
+     ),
+     
+     xaxis = list(
+      title = "",
+      categoryoder = "array",
+      categoryarray =  date_list
+    ),
+    
+    yaxis = list(
+      title = "COVID-19 Hospitalizations per 100,000 People per Day"
+    ),
+    
+    
+    hovermode = "x unified"
+  )
+
+
+vac_unvac_hosp_graph
+
+
+```
+##### Get the Data <a href="`r vac_unvac_hosp_url`" target="_blank">Here</a>
+
+<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+Age-adjusted COVID-19 hospitalizations per 100,000 people per day by COVID-19 vaccination status and aggregated into 4-week periods based on date of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p><br>
+
+
+
+
+<p>&nbsp;</p>
+
+
+* Among Alaska residents aged ≥5 years from January 16, 2021–March 12, 2022, 69,054 cases were documented in persons who had completed the primary series and were considered fully vaccinated. Among those vaccine-breakthrough cases, 515 hospitalizations and 180 deaths due to COVID-19 have been recorded. During that time, 98,276 cases have been documented in unvaccinated Alaskans aged ≥5 years, leading to 1,836 hospitalizations and 642 deaths. All data are preliminary and subject to change.
+
+* During the Omicron wave, the incidence of COVID-19 cases in vaccinated persons has become more similar to the incidence in unvaccinated persons. This trend likely reflects multiple factors which may include: immunity wanes over time, cases in vaccinated persons may be more likely to be detected than cases in unvaccinated persons, and there may be increased infection-induced immunity especially among unvaccinated persons.
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+<!-- TITLE AND SUBTITLE  FOR VACCINATED VS UNVACCINATED CASE RATES -->
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+COVID-19 Case Rates by Vaccination Status by Week</b></p>
+
+```{r, Vaccination Vs Unvaccinated Case Rates Line Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+vac_unvac_case_graph <- plot_ly(vac_unvac_case_data, hovertemplate = "%{y:.2f}") %>%
+  
+  #Add Up to Date
+  add_trace(
+    name = "Up to Date",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Up.to.Date,
+    line = list(
+      width = 3,
+      color = "#00dca6"
+    )
+    ) %>%
+  
+  add_trace(
+    name = "Fully Vaccinated",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Full.Vax,
+    line = list(
+      width = 3,
+      color = "#ad95dc"
+    )
+    ) %>%
+  
+  add_trace(
+    name = "Unvaccinated",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Unvax,
+    line = list(
+      width = 3,
+      color = "#1d81a2"
+    )
+    ) %>%
+  
+  
+  layout(
+     legend = list(
+      x = .03, 
+      y = .97),
+     
+     xaxis = list(
+      title = ""
+    ),
+    
+    yaxis = list(
+      title = "COVID-19 Cases per 100,000 People per Day"
+    ),
+      
+    hovermode = "x unified"
+    
+    
+  )
+
+
+vac_unvac_case_graph
+```
+##### Get the Data <a href="`r vac_unvac_case_url`" target="_blank">Here</a>
+
+<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+Age-adjusted COVID-19 cases per 100,000 people per day by COVID-19 vaccination status by week of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p><br>
+
+
+
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+
+
+## Influenza (“Flu”)
+* Reported influenza cases began increasing in Alaska in mid-December. The number of reported cases the week of March 27–April 2 remained similar to the number reported the previous week.
+
+* Right now, most influenza in Alaska is caused by influenza A.
+24% of Alaskans aged ≥10 years have been vaccinated against seasonal influenza. It is not too late to get vaccinated against influenza.
+
+
+* Learn more in the weekly <a href="https://dhss.alaska.gov/dph/Epi/id/SiteAssets/Pages/influenza/trends/Snapshot.pdf" target="_blank">Alaska Influenza Snapshot.</a> 
+
+<p>&nbsp;</p>
+
+```{r, Flu Cases by Week Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+flu_seasons_cases_graph = plot_ly(flu_season_cases) %>%
+  
+  #CURRENT SEASON
+  add_trace(
+    name = "Current Season",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Season_Current,
+    line = list(
+      color = "#ff0505",
+      width = 3
+    )
+  ) %>%
+  
+  
+  
+  #2020 - 2021 SEASON
+  add_trace(
+    name = "20' - 21' Season",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Season_20_21,
+    line = list(
+      color = "#9d9d9d",
+      width = 3
+    )
+  ) %>%
+  
+  
+  
+  #2019 - 2020 SEASON
+  add_trace(
+    name = "19' - 20' Season",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Season_19_20,
+    line = list(
+      color = "#dddddd",
+      width = 3
+    )
+  ) %>%
+  
+  
+  
+  #2018 - 2019 SEASON
+  add_trace(
+    name = "18' - 19' Season",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Season_18_19,
+    line = list(
+      color = "#000000",
+      width = 3
+    )
+  ) %>%
+  
+  
+  
+  #2017 - 2018 SEASON
+  add_trace(
+    name = "17' - 18' Season",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~Season_17_18,
+    line = list(
+      color = "#727272",
+      width = 3
+    )
+  ) %>%
+  
+  
+  
+  
+  #SET LAYOUT
+  layout(
+    
+    #Set X Axis
+    xaxis = list(
+      title = ''
+    ),
+    
+    
+    
+    #Set Y Axis
+    yaxis = list(
+      title = "Number of Lab Reports"
+    ),
+      
+      
+    #Set Hover Selector
+    hovermode = "x unified",
+    
+    
+    legend = list(
+      x = .05,
+      y = .98
+    )
+  )
+
+
+
+
+flu_seasons_cases_graph 
+```
+##### Get the Data <a href="`r flu_season_url`" target="_blank">Here</a>
+
+<p style="font-family: Open Sans; font-size: 14px; color: #000000; text-align: left; line-height: 1.4em;">
+Positive influenza lab reports in Alaska by week of specimen collection for the 2017-2018 influenza season through present. The current season through April 16, 2022 is shown in red.</p>
+
+
+
+
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+## Emergency Department Visits
+### Visits with COVID-like or Influenza-like Illness {.unlisted .unnumbered}
+
+* Syndromic surveillance consists of analyzing data on symptoms and diagnoses among patients visiting emergency departments in Alaska. The main goal is to identify trends. Unlike case-based surveillance, syndromic surveillance does not depend on laboratory testing.
+
+* Influenza-like illness (ILI) is defined as having a fever and at least one other symptom, such cough or sore throat. Patients with a diagnosis of influenza are also included, regardless of symptoms.
+
+* COVID-like illness (CLI) encompasses a broader array of respiratory and other symptoms than influenza-like illness. This category also includes any patient with a diagnosis of COVID-19, regardless of symptoms.
+
+* Patients with a diagnosis of COVID-19 are excluded from the ILI category and, likewise, patients with a diagnosis of influenza are excluded from the CLI category. But a patient without a diagnosis for either could be included in both the CLI and ILI categories. CLI and ILI may be caused by respiratory viruses other than SARS-CoV-2 and influenza virus.
+
+* As the Delta variant wave waned in Alaska in late October and November 2021, the percentage of emergency department patients with CLI declined. However, it increased in mid-December, reaching its peak in mid-January. Now, it is at a level lower than that observed in December before the Omicron wave. The percentage of emergency department patients with CLI the week of March 27–April 2 remained similar to the percentage recorded the prior week.
+
+* ILI levels increased in December but have since decreased from the late-December peak, remaining steady over the last few weeks.
+
+<p>&nbsp;</p>
+
+
+```{r, Emergency Department Comparison, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
+emergency_department_graph = plot_ly(emergency_department_cases) %>%
+  
+  #Add COVID-Like Illness Line
+  add_trace(
+    name = "COVID-Like Illness",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~CLI,
+    line = list(
+      color = "#fba63b",
+      width = 3)
+    ) %>%
+      
+      
+  #Add Influenza -Like Illness Line
+  add_trace(
+    name = "Influenza-Like Illness",
+    type = "scatter",
+    mode = "lines",
+    x = ~Date,
+    y = ~ILI,
+    line = list(
+      color = "#150fad",
+      width = 3)
+    ) %>%
+  
+  
+  
+  #Layout
+  layout(
+    
+    #SET HOVER MODE
+    hovermode = "x unified",
+    
+    #SET XAXIS
+    xaxis = list(
+      title = ""
+    ),
+    
+    
+    #SET YAXIS
+    yaxis = list(
+      title = "Percentage of Visits"
+    ),
+    
+    
+    #SET LEGEND
+    legend = list(
+      x = .05,
+      y = .98
+    )
+    
+  )
+    
+    
+  
+emergency_department_graph
+```
+##### Get the Data <a href="`r emergency_department_url`" target="_blank">Here</a>
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+
+## New Updates
+### Updates to protect yourself and your family {.unlisted .unnumbered}
+
+* <b>Treatments for COVID-19 are available and work best when given as soon as possible after symptoms start.</b> If you test positive and you’re at increased risk for severe COVID-19, ask a health care provider about treatment options. If you have COVID-like symptoms but test negative on an at-home test, you could still have COVID-19. To be sure, either test again with an antigen test 2 days after your first test or consider getting a molecular test as soon as possible if you are at high-risk for complications. <a href="https://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/outpatienttreatment.aspx" target="_blank">Learn more about COVID-19 treatments</a> and <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcovid-19-therapeutics-locator-dhhs.hub.arcgis.com%2F&data=05%7C01%7Cellen.flannery%40alaska.gov%7Cd1bf1aff0dd8483bf1f808da2407b619%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637861913073180888%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=osqitqGyVyuTIM2y%2Fn5YB8oQyqSZkcJjIm7lhyOUaOQ%3D&reserved=0" target="_blank">where you can find COVID-19 treatments</a>
+
+* Vaccine boosters: <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/vaccineappointments.aspx" target="_blank">Everyone 12 or older should get a COVID-19 vaccine booster</a> if it's been five months since receiving the Pfizer or Moderna vaccines or two months since receiving the Johnson & Johnson vaccine. <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.cdc.gov%2Fmedia%2Freleases%2F2022%2Fs0328-covid-19-boosters.html&data=04%7C01%7Cellen.flannery%40alaska.gov%7C4e0ae73614ba4e5a9a6c08da14238354%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637844440015039996%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&sdata=qQQJvspEWDPhMqKE1crS5tgyR3Bfw4tNUXkESFaaRDI%3D&reserved=0" target="_blank">People over the age of 50 and some immunocompromised individuals may receive a second mRNA booster</a> (Pfizer or Moderna) four months after their first booster dose. Additionally, people who have received the Johnson & Johnson vaccine for both their primary dose and booster dose may receive a second booster dose using an mRNA vaccine. Pfizer or Moderna vaccine boosters are preferred. Individuals aged 12-17 can receive a Pfizer booster only.
+
+* DHSS Community Case Rates: To complement the CDC’s <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.cdc.gov%2Fcoronavirus%2F2019-ncov%2Fscience%2Fcommunity-levels.html&data=04%7C01%7Cellen.flannery%40alaska.gov%7C3d29985f77e742abeef108da17fd5cd1%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637848674199244662%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&sdata=S7%2BBKdADGRkIiIE378LCCYb37jCxhS0M%2BoUC%2FMelW8I%3D&reserved=0" target="_blank">Community Levels tool</a> , DHSS has introduced a new <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/alertlevels.aspx" target="_blank">Community Case Rates tool.</a>  Both tools can help individuals, organizations, and communities make decisions about prevention measures. The Alert Levels on the <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fexperience.arcgis.com%2Fexperience%2Faf2efc8bffbf4cdc83c2d1a134354074%2F&data=04%7C01%7Cellen.flannery%40alaska.gov%7C3d29985f77e742abeef108da17fd5cd1%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637848674199244662%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&sdata=a2zKubi3NzByu%2Bw%2Fmh43uLrP6kZMY7%2BCNRsw2z2lLDI%3D&reserved=0" target="_blank">dashboard</a> have been retired and replaced by Community Case Rates.
+
+* Ask a health care provider about treatment: If you test positive and you’re at increased risk for severe COVID, ask a health care provider about treatment options. Treatments can reduce the risk of hospitalization and they work best when given soon after symptoms start. Learn more about COVID-19 treatments and where you can find COVID-19 treatments.
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+
+
+
+## Information and Resources
+
+* The State of Alaska <a href="http://dhss.alaska.gov/dph/epi/id/pages/COVID-19/vaccine.aspx" target="_blank">COVID-19 vaccines update page</a> 
+
+* The State of Alaska <a href="http://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/default.aspx" target="_blank">COVID-19 information page</a> provides more information about the virus and how individuals and businesses can protect themselves and others from transmission. 
+
+* The DHSS <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/business.aspx" target="_blank">Business and Employer Toolkits</a> page has communications resources for any organization that wants to keep workers, partners, clients, and customers informed about COVID-19.
+
+* DHSS <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/shareables.aspx" target="_blank">COVID-19 Communication Toolkit</a> provides PSAs, flyers, and social media graphics.
+** Learn more about the importance of physical activity, highlighted by our Play Every Day and our Healthy You 2022 campaigns: <a href="https://dhss.alaska.gov/dph/PlayEveryDay/blog/Lists/Posts/Post.aspx?ID=494&fbclid=IwAR3eQ3SmqPvlkCp2AVZaMXcgclEIDGli5HSr2K809D3rTxE_yPi-iI1zCNw" target="_blank">Play Every Day.</a>
+
+* Subscribe to the <a href="https://public.govdelivery.com/accounts/AKDHSS/subscriber/new?topic_id=AKDHSS_176" target="_blank">DHSS Insights blog</a> for behind-the-scenes news about Alaska’s COVID-19 response and other efforts to protect the health and well-being of Alaskans.
+
+* DHSS offers free presentations upon request to groups about COVID-19, the vaccines, COVID-19 prevention, or other health topics upon request. Learn more or request a presentation on our <a href="http://dhss.alaska.gov/dph/epi/id/pages/COVID-19/speakersbureau.aspx" target="_blank">Speaker’s Bureau web page.</a>
+
+* For the most up-to-date case information, see the Alaska COVID-19 Information Hub dashboard: <a href="https://alaska-coronavirus-vaccine-outreach-alaska-dhss.hub.arcgis.com/" target="_blank">data.coronavirus.alaska.gov</a>. All dashboard data are updated Wednesdays (except <a href="http://doa.alaska.gov/calendar/" target="_blank">holidays</a>). 
+
+* For DHSS media inquiries, please contact clinton.bennett@alaska.gov
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+
+
+
+## Echo Sessions
+
+<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19-Weekly-Report/echo-banner.png)</center>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<center><a href="http://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/echo.aspx" target="_blank">Session information and recordings of previous ECHO sessions</a></center>
+
+<center><a href="http://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/echo.aspx" target="_blank">Subscribe to ECHO calendar updates</a> | email: echo@alaskachd.org | website: <a href="https://www.uaa.alaska.edu/academics/college-of-health/departments/center-for-human-development/AK-ECHO/index.cshtml" target="_blank">akecho.org</a></center>
+
+<p>&nbsp;</p>
+
+ECHO sessions create virtual learning communities by connecting Alaska's health experts with specific audiences on specific topics. These sessions are produced and facilitated by UAA’s Center for Human Development Alaska ECHO project in partnership with the State of Alaska, Department of Health & Social Services.
+
+<p>&nbsp;</p>
+
+Below is a selection of upcoming ECHO sessions. The <a href="https://25livepub.collegenet.com/e.aspx?calendar=uaa-echo&widget=monthlist&spudformat=xhr" target="_blank">full schedule</a> of ECHO sessions and access to COVID-19 ECHO videos and slideshows are available for download anytime on the <a href="https://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/echo.aspx" target="_blank">DHSS ECHO web page.</a>
+
+<p>&nbsp;</p>
+
+<b>School Health ECHO</b> <br>
+Monday, 3-4 p.m., ending May 23rd (<a href="https://urldefense.com/v3/__https:/echo.zoom.us/meeting/register/tJYpd-GgrDsjH90NbUMIo_isIIQ-eEKDJwd4__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyA2_JgwDA%24" target="_blank">Register</a>) <br>
+
+The School Health ECHO is a virtual learning network intended for professionals in the education setting (administrators, school-based nurses, etc.) to interface with a team of medical and education experts in Alaska.
+
+<p>&nbsp;</p>
+
+<b>Vaccine ECHO for Providers</b> <br>
+Bi-weekly Tuesday, 2-3 p.m. (<a href="https://urldefense.com/v3/__https:/echo.zoom.us/meeting/register/tJYpd-GgrDsjH90NbUMIo_isIIQ-eEKDJwd4__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyA2_JgwDA%24" target="_blank">Register</a>) <br>
+
+The Vaccine ECHO for providers provides planning and operation updates to vaccine providers across Alaska, while answering any questions you may have.
+
+<p>&nbsp;</p>
+
+<b>Public Science ECHO</b><br>
+Bi-weekly Wednesday, 12-12:45 p.m., ending May 25th (<a href="https://urldefense.com/v3/__https:/alaska.zoom.us/webinar/register/WN_i2syaoh3SCCTKY2U289H_Q__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyAvaKFJ30%24" target="_blank">Register</a>) <br>
+
+The Alaska Public Health Science ECHO is a virtual learning network intended for the general public to interface with our Public Health Leadership Team to explore the science of the COVID-19 virus, other public health topics, and current best practices. Or view via concurrent livestream to Facebook: https://www.facebook.com/akechoprograms
+
+<p>&nbsp;</p>
+
+<b>Healthcare Specific Situational Awareness ECHO</b><br>
+Bi-weekly Thursday, 1-2 p.m., ending May 26th (<a href="https://urldefense.com/v3/__https:/zoom.us/j/401350920__;!!J2_8gdp6gZQ!4hs3t0P6ycLS7IK3DMw_BbyIvN82YZr15Fz7UiLktMHwy_XDpjWu8iFbEysZmSyAfOPun44%24" target="_blank">Register</a>) <br>
+
+The Healthcare Specific Situational ECHO is a virtual learning network intended for healthcare professionals to interface with our Public Health Leadership Team to explore current best practices and the most recent information related to Public Health.
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+<p style="font-family: Open Sans; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+Alaska COVID-19 and Influenza Weekly Case Update:  `r start_end_month_day_year`</b></p>
+
+
+```{r tags fonts, include = FALSE}
+tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback", rel = "stylesheet")
+
+tags$link(href = "https://fonts.googleapis.com/css2?family=Open+Sans+Condensed&display=swap", rel="stylesheet")
+
+tags$link(href = "https://fonts.googleapis.com/css2?family=Open+Sans&display=swap", rel="stylesheet")
+
+tags$link(href = "https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap", rel="stylesheet")
+
+tags$link(href = "https://fonts.googleapis.com/css2?family=Varela+Round&display=swap", rel="stylesheet")
+```
+
+
+
+<style type="text/css">
+
+h1.title {
+  font-size: 20px;
+  font-family: "Open Sans";
+  font-weight: 600;
+  color: Black;
+  text-align: center;
+}
+
+h4.author { /* Header 4 - and the author and data headers use this too  */
+  font-size: 24px;
+  font-family: "Open Sans";
+  font-weight: 700;
+  color: Black;
+  text-align: center;
+  padding-top: 10px
+}
+
+h4.date { /* Header 4 - and the author and data headers use this too  */
+  font-size: 20px;
+  font-family: "Open Sans";
+  font-weight: 600;
+  color: Black;
+  text-align: center;
+  padding-top:20px
+}
+
+h2 { /* Section Headers  */
+  font-size: 26px;
+  font-weight: 600;
+  font-family: "Arial";
+  color: Black;
+}
+
+h3 { /* Sub Headers  */
+  font-size: 22px;
+  font-weight: 600;
+  font-family: "Arial";
+  color: Black;
+}
+
+
+h5 { /* html link  */
+  font-size: 12px;
+  font-weight: 500;
+  font-family: "Open Sans";
+  color: Black;
+  text-align: left;
+}
+
+
+body{
+  font-family: Open Sans;
+  font-size: 12pt;
+}
+
+.area_sans {
+  font-family: "Open Sans", sans-seriff;
+  display: inline-block;
+  font-weight: 800;
+  font-size: 16px;
+  color: #454545
+}
+
+.area_varela {
+  font-family: "Varela Round", sans-serif;
+  display: inline-block;
+  font-weight: 600;
+  font-size: 14px;
+  color: #454545
+}
+
+.area_robo {
+  font-family: "Roboto+Slab", serif;
+  display: inline-block;
+  font-weight: 520;
+  font-size: 14px;
+  color: #424242
+}
+
+.area_fira {
+  font-family: "Fira Mono", Consolas, Monaco, monospace;
+  display: inline-block;
+  font-weight: 800;
+  font-size: 12px
+}
+
+.number_sans {
+  font-family: "Open Sans", sans-seriff;
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 15px;
+  font-weight: 550;
+  font-size: 13px;
+  color: #3b3b3b
+}
+
+.number_varela {
+  font-family: "Varela Round", sans-serif;
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #3b3b3b
+}
+
+
+.number_fira {
+  font-family: "Fira Mono", Consolas, Monaco, monospace;
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 15px;
+  font-weight: 300;
+  font-size: 12px;
+}
+
+.number_robo {
+  font-family: "Roboto+Slab", seriff;
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 15px;
+  font-weight: 300;
+  font-size: 12px;
+}
+
+.tag {
+  font-family: "Fira Mono", Consolas, Monaco, monospace;
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 12px;
+}
+.rate_level_5 {
+  background: #a8171c;
+  color: #ffffff;
+}
+.rate_level_4 {
+  background: #df342d;
+  color: #ffffff;
+}
+.rate_level_3 {
+  background: #fb6f50;
+  color: #ffffff;
+}
+.rate_level_2 {
+  background: #fcb194;
+  color: #474747;
+}
+.rate_level_1 {
+  background: #fee6da;
+  color: #474747;
+}
+
+</style>
