@@ -1,13 +1,12 @@
 ---
-title: "![](C:/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/COVID-19-Weekly-Report/logo.jpg)"
+title: "![](C:/Users/ccross/Documents/Projects/COVID-19-Weekly-Report/logo.jpg)"
 author: Alaska Department of Health and Social Services Weekly COVID-19 and Influenva
   Update
 date: "March 27 – April 2, 2022"
 output:
   html_document:
-    toc: yes
-    toc_float: yes
-    code_folding: hide
+    toc: no
+    toc_float: no
 graphics: yes
 ---
 
@@ -224,6 +223,11 @@ write.csv(cases_csv_dataframe,
                  newFileDate,
                  ".csv"),
           row.names = FALSE)
+
+
+#Set Public Data Access Url Access String with File Date
+cases_onset_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Cases_by_Onset_Date/cases_by_onset_date_", newFileDate, ".csv")
+
 ```
 
 
@@ -579,6 +583,11 @@ write.csv(covid_cases,
                  newFileDate,
                  ".csv"),
           row.names = FALSE)
+
+
+
+#Set URL Access Web Address
+cases_rates_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Case_Rates_by_BCA/case_rates_by_bca_", newFileDate, ".csv")
 ```
 
 
@@ -686,6 +695,10 @@ write.csv(hosp_bed_occupied,
                  newFileDate,
                  ".csv"),
           row.names = FALSE)
+
+
+#Set URL Access Web Address
+hosp_beds_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Hospital_Beds_Occupied/hospital_beds_occupied_", newFileDate, ".csv")
 ```
 
 
@@ -725,6 +738,10 @@ write.csv(vac_unvac_hosp_data,
                  newFileDate,
                  ".csv"),
           row.names = FALSE)
+
+
+#Set URL Access Web Address
+vac_unvac_hosp_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Hospital_Rates_by_Vaccination_Status/hospital_rates_by_vaccination_status_", newFileDate, ".csv")
 ```
 
 
@@ -763,6 +780,10 @@ write.csv(vac_unvac_case_data,
                  newFileDate,
                  ".csv"),
           row.names = FALSE)
+
+
+#Set URL Access Web Address
+vac_unvac_case_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Case_Rates_by_Vaccination_Status/case_rates_by_vaccination_status_", newFileDate, ".csv")
 ```
 
 
@@ -811,7 +832,12 @@ write.csv(flu_season_cases,
                  newFileDate,
                  ".csv"),
           row.names = FALSE)
+
+
+#Create URL for Public Access
+flu_season_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Influenza_by_Season/influenza_by_season_", newFileDate, ".csv")
 ```
+
 
 
 
@@ -854,6 +880,10 @@ write.csv(emergency_department_cases,
                  newFileDate,
                  ".csv"),
           row.names = FALSE)
+
+
+#Create URL for Public Access
+emergency_department_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Emergency_Department_Visists/emergency_department_visits_", newFileDate, ".csv")
 ```
 
 
@@ -862,6 +892,18 @@ write.csv(emergency_department_cases,
 <p>&nbsp;</p>
 
 
+
+
+
+
+
+
+
+
+
+
+
+<!-- UPDATE TEXT SECTIONS HERE -->
 
 
 ### Key Findings 
@@ -884,7 +926,7 @@ write.csv(emergency_department_cases,
 
 ## COVID-19 
 
-### <em>COVID-19 Case Trends</em> {.unlisted .unnumbered}
+### COVID-19 Case Trends {.unlisted .unnumbered}
 
 * COVID-19 transmission continues to occur widely throughout much of Alaska, with some evidence for an upwards trajectory. Cases and hospitalizations remain far below the peak of the Omicron wave.
 
@@ -904,7 +946,7 @@ write.csv(emergency_department_cases,
 
 
 <!-- TITLE AND SUBTITLE  FOR WEEKLY CASES GRAPH -->
-<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Open Sans; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 Weekly COVID-19 Cases Among Alaskan Residents by Onset Date</b></p>
 
 ```{r, Onset Cases by Week Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
@@ -970,14 +1012,15 @@ cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
 
 cases_onset_graph
 ```
+##### Get the Data <a href="`r cases_onset_url`" target="_blank">Here</a>
+
 <p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
-Cases are attributed to symptom onset date, if recorded. Otherwise, cases are attributed to specimen collection date, report date or hospitalization date, whichever comes first.</p> <br>
-
-##### Get the Data <a href="url">Here</a>
+Cases are attributed to symptom onset date, if recorded. Otherwise, cases are attributed to specimen collection date, report date or hospitalization date, whichever comes first.</p>
 
 
 
 
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
@@ -1084,7 +1127,7 @@ reactable(cases_reactable_table,
 
 ```
 <center>
-##### Get the Data <a href="url">Here</a>
+##### Get the Data <a href="`r cases_rates_url`" target="_blank">Here</a>
 
 <p style="font-family: Open Sans; font-size: 12px; color: #000000; text-align: left; line-height: 1.4em;">
 *Rates based on <20 observations are statistically unreliable and should be used with caution.</p>
@@ -1104,7 +1147,7 @@ Alert levels are based on case report date. The case rates in the Kusilvak and B
 
 
 
-### <em>COVID-19 and Hospital Capacity</em> {.unlisted .unnumbered}
+### COVID-19 and Hospital Capacity {.unlisted .unnumbered}
 
 * Hospital capacity remains limited. Large numbers of patients overall (not necessarily with COVID-19 or other respiratory viruses) relative to the number of available staff continue to create capacity challenges across the state, with some areas more affected than others.
 
@@ -1361,11 +1404,12 @@ hosp_bed_graph <- plot_ly(hosp_bed_occupied) %>%
 
 hosp_bed_graph
 ```
+##### Get the Data <a href="`r hosp_beds_url`" target="_blank">Here</a>
 
 <p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
-For clarity of display, the number of hospital beds occupied is shown for each Saturday. For more data on hospital capacity please visit the Hospital Dashboard or the Hospital Data Tables. All data are preliminary and subject to change first.</p><br>
+For clarity of display, the number of hospital beds occupied is shown for each Saturday. For more data on hospital capacity please visit the <a href="https://alaska-dhss.maps.arcgis.com/apps/dashboards/2546d1e6fd7b4070ab299289d6594516" target="_blank">Hospital Dashboard</a> or the <a href="https://covid-19-csv-files-database-alaska-dhss.hub.arcgis.com/" target="_blank">Hospital Data Tables.</a> All data are preliminary and subject to change first.</p>
 
-##### Get the Data <a href="url">Here</a>
+
 
 
 
@@ -1377,7 +1421,7 @@ For clarity of display, the number of hospital beds occupied is shown for each S
 
 
 
-### <em>COVID-19 and Vaccination</em> {.unlisted .unnumbered}
+### COVID-19 and Vaccination {.unlisted .unnumbered}
 * 71.2% of Alaska residents aged ≥5 years have received at least one dose of a COVID-19 vaccine. Among those who completed the primary vaccine series, 50.2% of Alaska residents ≥18 years have received their booster. Learn more about COVID-19 vaccination coverage in Alaska on the <a href="https://experience.arcgis.com/experience/a7e8be4adbe740a1bad1393894ee4075/" target="_blank">Vaccine Dashboard</a>. Learn more about <a href="https://dhss.alaska.gov/dph/epi/id/pages/covid-19/vaccineappointments.aspx" target="_blank">COVID-19 vaccines</a>.
 
 * Vaccines help protect against infection and against severe disease, especially when a person is up to date on vaccinations. During the 4-week period from February 6, 2022–March 5, 2022, unvaccinated Alaskans were 7.3 times more likely to be hospitalized due to COVID-19 than Alaskans who are up to date on COVID-19 vaccination (i.e., completed the primary series and received a booster dose, if eligible) and 2.9 times more likely to be hospitalized due to COVID-19 than Alaskans who completed the primary vaccination series but are not up to date. These estimates are lagged by one week to partially account for the time it takes to document hospitalizations. (See the <a href="https://dhss.alaska.gov/dph/Epi/id/siteassets/pages/HumanCoV/COVID_monthly_update.pdf" target="_blank">monthly report</a> for more data and analysis through January.)
@@ -1476,11 +1520,12 @@ vac_unvac_hosp_graph
 
 
 ```
+##### Get the Data <a href="`r vac_unvac_hosp_url`" target="_blank">Here</a>
 
 <p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
 Age-adjusted COVID-19 hospitalizations per 100,000 people per day by COVID-19 vaccination status and aggregated into 4-week periods based on date of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p><br>
 
-##### Get the Data <a href="url">Here</a>
+
 
 
 <p>&nbsp;</p>
@@ -1564,10 +1609,11 @@ vac_unvac_case_graph <- plot_ly(vac_unvac_case_data, hovertemplate = "%{y:.2f}")
 
 vac_unvac_case_graph
 ```
+##### Get the Data <a href="`r vac_unvac_case_url`" target="_blank">Here</a>
+
 <p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
 Age-adjusted COVID-19 cases per 100,000 people per day by COVID-19 vaccination status by week of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p><br>
 
-##### Get the Data <a href="url">Here</a>
 
 
 
@@ -1703,12 +1749,13 @@ flu_seasons_cases_graph = plot_ly(flu_season_cases) %>%
 
 flu_seasons_cases_graph 
 ```
+##### Get the Data <a href="`r flu_season_url`" target="_blank">Here</a>
 
 <p style="font-family: Open Sans; font-size: 14px; color: #000000; text-align: left; line-height: 1.4em;">
 Positive influenza lab reports in Alaska by week of specimen collection for the 2017-2018 influenza season through present. The current season through April 16, 2022 is shown in red.</p>
 
 
-##### Get the Data <a href="url">Here</a>
+
 
 
 
@@ -1719,7 +1766,7 @@ Positive influenza lab reports in Alaska by week of specimen collection for the 
 
 
 ## Emergency Department Visits
-### <em>Visits with COVID-like or Influenza-like Illness</em> {.unlisted .unnumbered}
+### Visits with COVID-like or Influenza-like Illness {.unlisted .unnumbered}
 
 * Syndromic surveillance consists of analyzing data on symptoms and diagnoses among patients visiting emergency departments in Alaska. The main goal is to identify trends. Unlike case-based surveillance, syndromic surveillance does not depend on laboratory testing.
 
@@ -1796,7 +1843,7 @@ emergency_department_graph = plot_ly(emergency_department_cases) %>%
   
 emergency_department_graph
 ```
-##### Get the Data <a href="url">Here</a>
+##### Get the Data <a href="`r emergency_department_url`" target="_blank">Here</a>
 
 
 <p>&nbsp;</p>
@@ -1807,7 +1854,7 @@ emergency_department_graph
 
 
 ## New Updates
-### <em>Updates to protect yourself and your family</em> {.unlisted .unnumbered}
+### Updates to protect yourself and your family {.unlisted .unnumbered}
 
 * <b>Treatments for COVID-19 are available and work best when given as soon as possible after symptoms start.</b> If you test positive and you’re at increased risk for severe COVID-19, ask a health care provider about treatment options. If you have COVID-like symptoms but test negative on an at-home test, you could still have COVID-19. To be sure, either test again with an antigen test 2 days after your first test or consider getting a molecular test as soon as possible if you are at high-risk for complications. <a href="https://dhss.alaska.gov/dph/Epi/id/Pages/COVID-19/outpatienttreatment.aspx" target="_blank">Learn more about COVID-19 treatments</a> and <a href="https://gcc02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fcovid-19-therapeutics-locator-dhhs.hub.arcgis.com%2F&data=05%7C01%7Cellen.flannery%40alaska.gov%7Cd1bf1aff0dd8483bf1f808da2407b619%7C20030bf67ad942f7927359ea83fcfa38%7C0%7C0%7C637861913073180888%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=osqitqGyVyuTIM2y%2Fn5YB8oQyqSZkcJjIm7lhyOUaOQ%3D&reserved=0" target="_blank">where you can find COVID-19 treatments</a>
 
@@ -1855,7 +1902,7 @@ emergency_department_graph
 
 ## Echo Sessions
 
-<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19 Weekly Report R Markdown/COVID-19-Weekly-Report/echo-banner.png)</center>
+<center>![Alt text](/Users/ccross/Documents/Projects/COVID-19-Weekly-Report/echo-banner.png)</center>
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -1952,14 +1999,14 @@ h4.date { /* Header 4 - and the author and data headers use this too  */
 }
 
 h2 { /* Section Headers  */
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 600;
   font-family: "Arial";
   color: Black;
 }
 
 h3 { /* Sub Headers  */
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   font-family: "Arial";
   color: Black;
@@ -1967,7 +2014,7 @@ h3 { /* Sub Headers  */
 
 
 h5 { /* html link  */
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   font-family: "Open Sans";
   color: Black;
