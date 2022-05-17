@@ -7,8 +7,10 @@ output:
     toc: no
     toc_float: no
 graphics: yes
+
 ---
 
+<!-- SET HTML WEBPAGE DISPLAY SETTINGS -->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -116,7 +118,9 @@ base_emergency_filepath <- "//hssancconf/DPH/HAVRS/Shared/Public Health Data for
 
 
 #UPDATE WHEN IN FINAL LOCATION!!  MUST BE UPDATED WITH REPOSITORY LOCATION!!
-base_public_data_filepath <- "C:/Users/ccross/Documents/Projects/COVID-19-Weekly-Report/Public_Data/"
+base_github_public_data_filepath <- "C:/Users/ccross/Documents/Projects/COVID-19-Weekly-Report/Public_Data/"
+
+base_dhss_public_data_filepath <- "//Hssjnupubweb2/DATADHSSALASKAGOV/data/COVID/COVID_19_Flu_Weekly_Report/Public_Data/"
 ```
 
 
@@ -215,18 +219,28 @@ cases_csv_dataframe <- rbind(cases_csv_cases_onset, cases_csv_prelim)
 
 
 
-#Save CSV to Public Data Folder
+#Save CSV to GitHub Public Data Folder
 write.csv(cases_csv_dataframe,
-          paste0(base_public_data_filepath, 
+          paste0(base_github_public_data_filepath, 
                  "Cases_by_Onset_Date/cases_by_onset_date_",
                  newFileDate,
                  ".csv"),
           row.names = FALSE)
 
 
-#Set Public Data Access Url Access String with File Date
-cases_onset_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Cases_by_Onset_Date/cases_by_onset_date_", newFileDate, ".csv")
 
+#Save CSV to DHSS Public Data Folder
+write.csv(cases_csv_dataframe,
+          paste0(base_dhss_public_data_filepath, 
+                 "Cases_by_Onset_Date/cases_by_onset_date_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+
+#Set Public Data Access Url Access String with File Date
+cases_onset_url <- paste0("https://data.dhss.alaska.gov/data/covid/covid_19_flu_weekly_report/public_data/cases_by_onset_date/cases_by_onset_date_", newFileDate, ".csv")
 ```
 
 
@@ -576,8 +590,18 @@ for (borough in case_rate_borough_list){
 
 
 #Export Original Cases Data to Publica Data
-write.csv(covid_cases,
-          paste0(base_public_data_filepath,
+write.csv(case_rate_remove_unk,
+          paste0(base_github_public_data_filepath,
+                 "Case_Rates_by_BCA/case_rates_by_bca_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+
+#Save CSV to DHSS Public Data Folder
+write.csv(case_rate_remove_unk,
+          paste0(base_dhss_public_data_filepath, 
                  "Case_Rates_by_BCA/case_rates_by_bca_",
                  newFileDate,
                  ".csv"),
@@ -586,7 +610,7 @@ write.csv(covid_cases,
 
 
 #Set URL Access Web Address
-cases_rates_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Case_Rates_by_BCA/case_rates_by_bca_", newFileDate, ".csv")
+cases_rates_url <- paste0("https://data.dhss.alaska.gov/data/covid/covid_19_flu_weekly_report/public_data/case_rates_by_bca/case_rates_by_bca_", newFileDate, ".csv")
 ```
 
 
@@ -689,15 +713,27 @@ hosp_bed_occupied <- data.frame(hosp_bed_add_total)
 
 #Generate CSV for Public Data
 write.csv(hosp_bed_occupied,
-          paste0(base_public_data_filepath,
+          paste0(base_github_public_data_filepath,
                  "Hospital_Beds_Occupied/hospital_beds_occupied_",
                  newFileDate,
                  ".csv"),
           row.names = FALSE)
 
 
+
+
+#Save CSV to DHSS Public Data Folder
+write.csv(hosp_bed_occupied,
+          paste0(base_dhss_public_data_filepath, 
+                 "Hospital_Beds_Occupied/hospital_beds_occupied_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+
 #Set URL Access Web Address
-hosp_beds_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Hospital_Beds_Occupied/hospital_beds_occupied_", newFileDate, ".csv")
+hosp_beds_url <- paste0("https://data.dhss.alaska.gov/data/covid/covid_19_flu_weekly_report/public_data/hospital_beds_occupied/hospital_beds_occupied_", newFileDate, ".csv")
 ```
 
 
@@ -732,15 +768,27 @@ vac_unvac_hosp_data <- data.frame(vac_unvac_hosp_data, stringsAsFactors = FALSE 
 
 #Generate CSV for Public Data
 write.csv(vac_unvac_hosp_data,
-          paste0(base_public_data_filepath,
+          paste0(base_github_public_data_filepath,
                  "Hospital_Rates_by_Vaccination_Status/hospital_rates_by_vaccination_status_",
                  newFileDate,
                  ".csv"),
           row.names = FALSE)
 
 
+
+
+#Save CSV to DHSS Public Data Folder
+write.csv(vac_unvac_hosp_data,
+          paste0(base_dhss_public_data_filepath, 
+                 "Hospital_Rates_by_Vaccination_Status/hospital_rates_by_vaccination_status_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+
 #Set URL Access Web Address
-vac_unvac_hosp_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Hospital_Rates_by_Vaccination_Status/hospital_rates_by_vaccination_status_", newFileDate, ".csv")
+vac_unvac_hosp_url <- paste0("https://data.dhss.alaska.gov/data/covid/covid_19_flu_weekly_report/public_data/hospital_rates_by_vaccination_status/hospital_rates_by_vaccination_status_", newFileDate, ".csv")
 ```
 
 
@@ -774,7 +822,16 @@ vac_unvac_case_data <- vac_unvac_case %>%
 
 #Generate CSV for Public Data
 write.csv(vac_unvac_case_data,
-          paste0(base_public_data_filepath,
+          paste0(base_github_public_data_filepath,
+                 "Case_Rates_by_Vaccination_Status/case_rates_by_vaccination_status_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+#Save CSV to DHSS Public Data Folder
+write.csv(vac_unvac_case_data,
+          paste0(base_dhss_public_data_filepath, 
                  "Case_Rates_by_Vaccination_Status/case_rates_by_vaccination_status_",
                  newFileDate,
                  ".csv"),
@@ -782,7 +839,7 @@ write.csv(vac_unvac_case_data,
 
 
 #Set URL Access Web Address
-vac_unvac_case_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Case_Rates_by_Vaccination_Status/case_rates_by_vaccination_status_", newFileDate, ".csv")
+vac_unvac_case_url <- paste0("https://data.dhss.alaska.gov/data/covid/covid_19_flu_weekly_report/public_data/case_rates_by_vaccination_status/case_rates_by_vaccination_status_", newFileDate, ".csv")
 ```
 
 
@@ -826,7 +883,17 @@ flu_season_cases <- data.frame(flu_season_rename_headers)
 
 #Generate CSV for Public Data
 write.csv(flu_season_cases,
-          paste0(base_public_data_filepath,
+          paste0(base_github_public_data_filepath,
+                 "Influenza_by_Season/influenza_by_season_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+
+#Save CSV to DHSS Public Data Folder
+write.csv(flu_season_cases,
+          paste0(base_dhss_public_data_filepath, 
                  "Influenza_by_Season/influenza_by_season_",
                  newFileDate,
                  ".csv"),
@@ -834,7 +901,7 @@ write.csv(flu_season_cases,
 
 
 #Create URL for Public Access
-flu_season_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Influenza_by_Season/influenza_by_season_", newFileDate, ".csv")
+flu_season_url <- paste0("https://data.dhss.alaska.gov/data/covid/covid_19_flu_weekly_report/public_data/influenza_by_season/influenza_by_season_", newFileDate, ".csv")
 ```
 
 
@@ -874,15 +941,24 @@ emergency_department_cases <- data.frame(emerg_depart_rename_headers)
 
 #Generate CSV for Public Data
 write.csv(emergency_department_cases,
-          paste0(base_public_data_filepath,
-                 "Emergency_Department_Visists/emergency_department_visits_",
+          paste0(base_github_public_data_filepath,
+                 "Emergency_Department_Visits/emergency_department_visits_",
+                 newFileDate,
+                 ".csv"),
+          row.names = FALSE)
+
+
+#Save CSV to DHSS Public Data Folder
+write.csv(emergency_department_cases,
+          paste0(base_dhss_public_data_filepath, 
+                 "Emergency_Department_Visits/emergency_department_visits_",
                  newFileDate,
                  ".csv"),
           row.names = FALSE)
 
 
 #Create URL for Public Access
-emergency_department_url <- paste0("https://raw.githubusercontent.com/farnorthdataconsulting/COVID-19-Weekly-Report/main/Public_Data/Emergency_Department_Visists/emergency_department_visits_", newFileDate, ".csv")
+emergency_department_url <- paste0("https://data.dhss.alaska.gov/data/covid/covid_19_flu_weekly_report/public_data/emergency_department_visists/emergency_department_visits_", newFileDate, ".csv")
 ```
 
 
@@ -945,7 +1021,7 @@ emergency_department_url <- paste0("https://raw.githubusercontent.com/farnorthda
 
 
 <!-- TITLE AND SUBTITLE  FOR WEEKLY CASES GRAPH -->
-<p style="font-family: Open Sans; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Open Sans; font-size: 21px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 Weekly COVID-19 Cases Among Alaskan Residents by Onset Date</b></p>
 
 ```{r, Onset Cases by Week Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
@@ -980,6 +1056,8 @@ cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
   
   
   
+  
+  
   #Figure Output Options
   layout(
     
@@ -1006,14 +1084,14 @@ cases_onset_graph <- plot_ly(cases_onset_by_week) %>%
     ),
         
       
-    legend = list(orientation = "h"#list(x = .72, y = .95)
-  ))
+    legend = list(x = .72, y = .95)
+  )
 
 cases_onset_graph
 ```
 ##### Get the Data <a href="`r cases_onset_url`" target="_blank">Here</a>
 
-<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;">
 Cases are attributed to symptom onset date, if recorded. Otherwise, cases are attributed to specimen collection date, report date or hospitalization date, whichever comes first.</p>
 
 
@@ -1162,7 +1240,7 @@ Alert levels are based on case report date. The case rates in the Kusilvak and B
 
 
 <!-- TITLE AND SUBTITLE  FOR HOSPITAL CAPACITY GRAPH -->
-<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Open Sans; font-size: 21px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 Hospital Beds Occupied by Persons with COVID-19 by Region</b></p>
 
 ```{r, Hospital Capacity Over Time Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
@@ -1405,7 +1483,7 @@ hosp_bed_graph
 ```
 ##### Get the Data <a href="`r hosp_beds_url`" target="_blank">Here</a>
 
-<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;">
 For clarity of display, the number of hospital beds occupied is shown for each Saturday. For more data on hospital capacity please visit the <a href="https://alaska-dhss.maps.arcgis.com/apps/dashboards/2546d1e6fd7b4070ab299289d6594516" target="_blank">Hospital Dashboard</a> or the <a href="https://covid-19-csv-files-database-alaska-dhss.hub.arcgis.com/" target="_blank">Hospital Data Tables.</a> All data are preliminary and subject to change first.</p>
 
 
@@ -1432,7 +1510,7 @@ For clarity of display, the number of hospital beds occupied is shown for each S
 <p>&nbsp;</p>
 
 <!-- TITLE AND SUBTITLE  FOR VACCINATED VS UNVACCINATED HOSPITALIZATION RATES -->
-<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Open Sans; font-size: 21px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 COVID-19 Hospitalization Rates by Vaccination Status by Week</b></p>
 
 ```{r, Vaccination Vs Unvaccinated Hospitalization Rate Line Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
@@ -1521,7 +1599,7 @@ vac_unvac_hosp_graph
 ```
 ##### Get the Data <a href="`r vac_unvac_hosp_url`" target="_blank">Here</a>
 
-<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;">
 Age-adjusted COVID-19 hospitalizations per 100,000 people per day by COVID-19 vaccination status and aggregated into 4-week periods based on date of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p><br>
 
 
@@ -1543,7 +1621,7 @@ Age-adjusted COVID-19 hospitalizations per 100,000 people per day by COVID-19 va
 
 
 <!-- TITLE AND SUBTITLE  FOR VACCINATED VS UNVACCINATED CASE RATES -->
-<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Open Sans; font-size: 21px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 COVID-19 Case Rates by Vaccination Status by Week</b></p>
 
 ```{r, Vaccination Vs Unvaccinated Case Rates Line Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
@@ -1610,7 +1688,7 @@ vac_unvac_case_graph
 ```
 ##### Get the Data <a href="`r vac_unvac_case_url`" target="_blank">Here</a>
 
-<p style="font-family: Open Sans; font-size: 15px; color: #000000; text-align: left; line-height: 1.4em;">
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;">
 Age-adjusted COVID-19 cases per 100,000 people per day by COVID-19 vaccination status by week of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p><br>
 
 
@@ -1750,7 +1828,7 @@ flu_seasons_cases_graph
 ```
 ##### Get the Data <a href="`r flu_season_url`" target="_blank">Here</a>
 
-<p style="font-family: Open Sans; font-size: 14px; color: #000000; text-align: left; line-height: 1.4em;">
+<p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;">
 Positive influenza lab reports in Alaska by week of specimen collection for the 2017-2018 influenza season through present. The current season through April 16, 2022 is shown in red.</p>
 
 
@@ -1758,6 +1836,7 @@ Positive influenza lab reports in Alaska by week of specimen collection for the 
 
 
 
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -1848,6 +1927,7 @@ emergency_department_graph
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+<p>&nbsp;</p>
 
 
 
@@ -1863,6 +1943,7 @@ emergency_department_graph
 
 * Ask a health care provider about treatment: If you test positive and you’re at increased risk for severe COVID, ask a health care provider about treatment options. Treatments can reduce the risk of hospitalization and they work best when given soon after symptoms start. Learn more about COVID-19 treatments and where you can find COVID-19 treatments.
 
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -1891,6 +1972,7 @@ emergency_department_graph
 
 * For DHSS media inquiries, please contact clinton.bennett@alaska.gov
 
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -1972,15 +2054,15 @@ tags$link(href = "https://fonts.googleapis.com/css2?family=Varela+Round&display=
 <style type="text/css">
 
 h1.title {
-  font-size: 20px;
+  font-size: 28px;
   font-family: "Open Sans";
   font-weight: 600;
   color: Black;
   text-align: center;
 }
 
-h4.author { /* Header 4 - and the author and data headers use this too  */
-  font-size: 24px;
+h4.author { /* Header 4 - USE THIS TO EDIT TITLE OF DOC  */
+  font-size: 30px;
   font-family: "Open Sans";
   font-weight: 700;
   color: Black;
@@ -1989,9 +2071,9 @@ h4.author { /* Header 4 - and the author and data headers use this too  */
 }
 
 h4.date { /* Header 4 - and the author and data headers use this too  */
-  font-size: 20px;
+  font-size: 24px;
   font-family: "Open Sans";
-  font-weight: 600;
+  font-weight: 400;
   color: Black;
   text-align: center;
   padding-top:20px
@@ -2013,7 +2095,7 @@ h3 { /* Sub Headers  */
 
 
 h5 { /* html link  */
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 500;
   font-family: "Open Sans";
   color: Black;
@@ -2023,7 +2105,7 @@ h5 { /* html link  */
 
 body{
   font-family: Open Sans;
-  font-size: 12pt;
+  font-size: 14pt;
 }
 
 .area_sans {
