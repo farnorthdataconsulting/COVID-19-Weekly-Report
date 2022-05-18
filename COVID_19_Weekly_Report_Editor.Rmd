@@ -958,7 +958,7 @@ write.csv(emergency_department_cases,
 
 
 #Create URL for Public Access
-emergency_department_url <- paste0("https://data.dhss.alaska.gov/data/covid/covid_19_flu_weekly_report/public_data/emergency_department_visists/emergency_department_visits_", newFileDate, ".csv")
+emergency_department_url <- paste0("https://data.dhss.alaska.gov/data/covid/covid_19_flu_weekly_report/public_data/emergency_department_visits/emergency_department_visits_", newFileDate, ".csv")
 ```
 
 
@@ -1017,11 +1017,10 @@ emergency_department_url <- paste0("https://data.dhss.alaska.gov/data/covid/covi
 
 
 <p>&nbsp;</p>
-<p>&nbsp;</p>
 
 
 <!-- TITLE AND SUBTITLE  FOR WEEKLY CASES GRAPH -->
-<p style="font-family: Open Sans; font-size: 21px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Arial; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 Weekly COVID-19 Cases Among Alaskan Residents by Onset Date</b></p>
 
 ```{r, Onset Cases by Week Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
@@ -1219,7 +1218,7 @@ Alert levels are based on case report date. The case rates in the Kusilvak and B
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-
+<p>&nbsp;</p>
 
 
 
@@ -1235,12 +1234,10 @@ Alert levels are based on case report date. The case rates in the Kusilvak and B
 
 
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-
 
 
 <!-- TITLE AND SUBTITLE  FOR HOSPITAL CAPACITY GRAPH -->
-<p style="font-family: Open Sans; font-size: 21px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Arial; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 Hospital Beds Occupied by Persons with COVID-19 by Region</b></p>
 
 ```{r, Hospital Capacity Over Time Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
@@ -1492,7 +1489,7 @@ For clarity of display, the number of hospital beds occupied is shown for each S
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-
+<p>&nbsp;</p>
 
 
 
@@ -1507,10 +1504,10 @@ For clarity of display, the number of hospital beds occupied is shown for each S
 
 
 <p>&nbsp;</p>
-<p>&nbsp;</p>
+
 
 <!-- TITLE AND SUBTITLE  FOR VACCINATED VS UNVACCINATED HOSPITALIZATION RATES -->
-<p style="font-family: Open Sans; font-size: 21px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Arial; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 COVID-19 Hospitalization Rates by Vaccination Status by Week</b></p>
 
 ```{r, Vaccination Vs Unvaccinated Hospitalization Rate Line Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
@@ -1600,9 +1597,7 @@ vac_unvac_hosp_graph
 ##### Get the Data <a href="`r vac_unvac_hosp_url`" target="_blank">Here</a>
 
 <p style="font-family: Open Sans; font-size: 18px; color: #000000; text-align: left; line-height: 1.4em;">
-Age-adjusted COVID-19 hospitalizations per 100,000 people per day by COVID-19 vaccination status and aggregated into 4-week periods based on date of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p><br>
-
-
+Age-adjusted COVID-19 hospitalizations per 100,000 people per day by COVID-19 vaccination status and aggregated into 4-week periods based on date of specimen collection. Categories for vaccination status are up to date (i.e., completed the primary series and have received a booster, if eligible), fully vaccinated but not up to date (i.e., completed the primary series and eligible for a booster, have not received one), and unvaccinated.</p>
 
 
 <p>&nbsp;</p>
@@ -1615,13 +1610,10 @@ Age-adjusted COVID-19 hospitalizations per 100,000 people per day by COVID-19 va
 
 
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-
 
 
 <!-- TITLE AND SUBTITLE  FOR VACCINATED VS UNVACCINATED CASE RATES -->
-<p style="font-family: Open Sans; font-size: 21px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+<p style="font-family: Arial; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 COVID-19 Case Rates by Vaccination Status by Week</b></p>
 
 ```{r, Vaccination Vs Unvaccinated Case Rates Line Graph, include = TRUE, echo = FALSE, out.width = "100%", out.height = "100%", warning = FALSE, message = FALSE}
@@ -2036,6 +2028,25 @@ The Healthcare Specific Situational ECHO is a virtual learning network intended 
 <p style="font-family: Open Sans; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
 Alaska COVID-19 and Influenza Weekly Case Update:  `r start_end_month_day_year`</b></p>
 
+<hr size="10">
+<br>
+
+<p style="font-family: Open Sans; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+Subscribe to Updates from Alaska DHSS</b><br></p>
+
+<input type="submit" value="Subscribe" class = "submit" formaction="https://public.govdelivery.com/accounts/AKDHSS/subscriber/qualify" formtarget="_blank" formmethod="get" onClick ="parent.location='https://public.govdelivery.com/accounts/AKDHSS/subscriber/qualify'">
+
+<p>&nbsp;</p>
+
+<p style="font-family: Open Sans; font-size: 20px; color: #000000; text-align: left; line-height: 1.4em;"><b>
+Share Bulletin</b><br></p>
+
+<div class="share-link-container"><a class="social-sharing-link" href="https://www.facebook.com/sharer.php?u=https://content.govdelivery.com/accounts/AKDHSS/bulletins/315b292?reqfrom=share" target="_blank" rel="noopener noreferrer"><img alt="share this bulletin on Facebook" src="https://content.govdelivery.com/assets/art/share_facebook-91b530a60fb05e3af56bdf009be581bf4a12c2c76869d0977348c57b79e2b5a8.png"></a><a class="social-sharing-link" href="https://twitter.com/intent/tweet?url=https://content.govdelivery.com/accounts/AKDHSS/bulletins/315b292?reqfrom=share%2F&amp;text=Alaska COVID-19 and Influenza Weekly Case Update: April 17 – April 23, 2022" target="_blank" rel="noopener noreferrer"><img alt="share this bulletin on Twitter" src="https://content.govdelivery.com/assets/art/share_twitter-ce26b5cc22b7873dabd0194c50be633379881724561f6d5c5622215fe4e28a1b.png"></a><a class="social-sharing-link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://content.govdelivery.com/accounts/AKDHSS/bulletins/315b292?reqfrom=share%2F&amp;source=govDelivery" target="_blank" rel="noopener noreferrer"><img alt="share this bulletin on LinkedIn" src="https://content.govdelivery.com/assets/art/share_linkedin-7e860813f5305f5c33e2548305528824a4846e7a8eac4a658d2a003995cdb7a5.png"></a><a class="social-sharing-link" href="mailto:?subject=Alaska COVID-19 and Influenza Weekly Case Update: April 17 – April 23, 2022&amp;body=https://content.govdelivery.com/accounts/AKDHSS/bulletins/315b292?reqfrom=share" target="_blank" rel="noopener noreferrer"><img alt="share this bulletin via email" src="https://content.govdelivery.com/assets/art/share_email-ecb03e091ef7d077856720b5cded62d7a6f89f923e53b9c86f6d4d6f81442b8f.png"></a></div>
+
+<p>&nbsp;</p>
+
+
+
 
 ```{r tags fonts, include = FALSE}
 tags$link(href = "https://fonts.googleapis.com/css?family=Karla:400,700|Fira+Mono&display=fallback", rel = "stylesheet")
@@ -2063,7 +2074,7 @@ h1.title {
 
 h4.author { /* Header 4 - USE THIS TO EDIT TITLE OF DOC  */
   font-size: 30px;
-  font-family: "Open Sans";
+  font-family: "Arial";
   font-weight: 700;
   color: Black;
   text-align: center;
@@ -2072,7 +2083,7 @@ h4.author { /* Header 4 - USE THIS TO EDIT TITLE OF DOC  */
 
 h4.date { /* Header 4 - and the author and data headers use this too  */
   font-size: 24px;
-  font-family: "Open Sans";
+  font-family: "Arial";
   font-weight: 400;
   color: Black;
   text-align: center;
@@ -2087,7 +2098,7 @@ h2 { /* Section Headers  */
 }
 
 h3 { /* Sub Headers  */
-  font-size: 22px;
+  font-size: 23px;
   font-weight: 600;
   font-family: "Arial";
   color: Black;
@@ -2097,7 +2108,7 @@ h3 { /* Sub Headers  */
 h5 { /* html link  */
   font-size: 16px;
   font-weight: 500;
-  font-family: "Open Sans";
+  font-family: "Arial";
   color: Black;
   text-align: left;
 }
@@ -2107,6 +2118,22 @@ body{
   font-family: Open Sans;
   font-size: 14pt;
 }
+
+
+.submit {
+  font-family: "Open Sans", sans-seriff;
+  display: inline-block;
+  font-weight: 400;
+  font-size: 16px;
+  color: Black
+}
+
+
+.social-sharing-link {
+  margin-right:10px !important;
+  display: inline-block !important
+}
+
 
 .area_sans {
   font-family: "Open Sans", sans-seriff;
